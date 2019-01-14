@@ -1,0 +1,200 @@
+ 
+DT =
+ 
+12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK)
+ 
+ 
+eq1 =
+ 
+X == 4*cos(T0 + T1) + 4*cos(T0) + cos(T0 + T1 + T2)*(12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK))
+ 
+ 
+eq2 =
+ 
+Y == 4*sin(T0 + T1) + 4*sin(T0) + sin(T0 + T1 + T2)*(12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK))
+ 
+ 
+eq3 =
+ 
+Z == 12*sin(T3) - HH*cos(T3 + TK) + HL*sin(T3 + TK) + 21
+ 
+ 
+eq4 =
+ 
+TX == 0
+ 
+ 
+eq5 =
+ 
+TY == T3 + TK
+ 
+ 
+eq6 =
+ 
+TZ == T0 + T1 + T2
+ 
+ 
+CONST1 =
+ 
+0 <= T1
+ 
+ 
+CONST2 =
+ 
+abs(TK) <= pi/2
+ 
+Elapsed time is 4.404496 seconds.
+Warning: Solutions are parameterized by the symbols: u, x, y, z, z1, z2. To
+include parameters and conditions in the solution, specify the
+'ReturnConditions' value as 'true'. 
+> In solve>warnIfParams (line 475)
+  In solve (line 357)
+  In invkinshernan (line 24) 
+Warning: Solutions are valid under the following conditions: 4*cos(x + z) +
+4*cos(z) + cos(x + z + z1)*(12*cos(z2) + HL*cos(TY) + HH*sin(TY)) == X & TZ ==
+x + z + z1 & u < 2*pi & y <= pi/2 & 4*sin(x + z) + 4*sin(z) + sin(x + z +
+z1)*(12*cos(z2) + HL*cos(TY) + HH*sin(TY)) == Y & 12*sin(z2) + HL*sin(TY) + 21
+== Z + HH*cos(TY) & TY == z2 + y*exp(u*1i) & TX == 0 & 0 <= u & 0 <= x & 0 <=
+y. To include parameters and conditions in the solution, specify the
+'ReturnConditions' value as 'true'. 
+> In solve>warnIfParams (line 482)
+  In solve (line 357)
+  In invkinshernan (line 24) 
+
+ans = 
+
+  struct with fields:
+
+    T0: [1×1 sym]
+    T1: [1×1 sym]
+    T2: [1×1 sym]
+    T3: [1×1 sym]
+    TK: [1×1 sym]
+
+Elapsed time is 497.939315 seconds.
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+ 
+DT =
+ 
+12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK)
+ 
+ 
+eq1 =
+ 
+X == 4*cos(T0 + T1) + 4*cos(T0) + cos(T0 + T1 + T2)*(12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK))
+ 
+ 
+eq2 =
+ 
+Y == 4*sin(T0 + T1) + 4*sin(T0) + sin(T0 + T1 + T2)*(12*cos(T3) + HL*cos(T3 + TK) + HH*sin(T3 + TK))
+ 
+ 
+eq3 =
+ 
+Z == 12*sin(T3) - HH*cos(T3 + TK) + HL*sin(T3 + TK) + 21
+ 
+ 
+eq4 =
+ 
+TX == 0
+ 
+ 
+eq5 =
+ 
+TY == T3 + TK
+ 
+ 
+eq6 =
+ 
+TZ == T0 + T1 + T2
+ 
+ 
+CONST1 =
+ 
+0 <= T1
+ 
+ 
+CONST2 =
+ 
+abs(TK) <= pi/2
+ 
+Elapsed time is 44.933019 seconds.
+Warning: Solutions are parameterized by the symbols: u, x, y, z, z1, z2. To
+include parameters and conditions in the solution, specify the
+'ReturnConditions' value as 'true'. 
+> In solve>warnIfParams (line 475)
+  In solve (line 357)
+  In invkinshernan (line 19) 
+Warning: Solutions are valid under the following conditions: 4*cos(x + z) +
+4*cos(z) + cos(x + z + z1)*(12*cos(z2) + HL*cos(TY) + HH*sin(TY)) == X & TZ ==
+x + z + z1 & u < 2*pi & y <= pi/2 & 4*sin(x + z) + 4*sin(z) + sin(x + z +
+z1)*(12*cos(z2) + HL*cos(TY) + HH*sin(TY)) == Y & 12*sin(z2) + HL*sin(TY) + 21
+== Z + HH*cos(TY) & TY == z2 + y*exp(u*1i) & TX == 0 & 0 <= u & 0 <= x & 0 <=
+y. To include parameters and conditions in the solution, specify the
+'ReturnConditions' value as 'true'. 
+> In solve>warnIfParams (line 482)
+  In solve (line 357)
+  In invkinshernan (line 19) 
+
+xxyyzz = 
+
+  struct with fields:
+
+    T0: [1×1 sym]
+    T1: [1×1 sym]
+    T2: [1×1 sym]
+    T3: [1×1 sym]
+    TK: [1×1 sym]
+
+Elapsed time is 45.290426 seconds.
+
+
+
+>> disp(xxyyzz.T0)
+z
+ 
+>> disp(xxyyzz.T1)
+x
+ 
+>> z
+Undefined function or variable 'z'.
+ 
+Did you mean:
+>> Z
+ 
+Z =
+ 
+Z
+ 
+>> disp(xxyyzz.T2)
+z1
+ 
+>> disp(xxyyzz.T3)
+z2
+ 
+>> disp(xxyyzz.Tk)
+Reference to non-existent field 'Tk'.
+ 
+>> disp(xxyyzz.TK)
+y*exp(u*1i)
+ 
+>> 
+
+
+
+
+
+
+
+
+
+
+
