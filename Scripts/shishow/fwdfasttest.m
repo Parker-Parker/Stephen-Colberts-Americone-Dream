@@ -10,7 +10,7 @@ times = 1:loops;
         tic;
         dofwdfast(T0, T1, T2, T3, T4, 1, 2);
         times(n) = toc;
-        vals
+%         vals
     end
     avg = mean(times);
 end

@@ -1,4 +1,4 @@
-function ee = dofwdfast(TH0, TH1, TH2, TH3, TH4, HH, HL, varargin)
+function ee = dofwdfast2(TH0, TH1, TH2, TH3, TH4, HH, HL, varargin)
     THK = -pi/2 + acos((sin(TH3) + 2*sin(TH3 - TH4) + 6)/(4*cos(TH4) + 12*sin(TH3) + 24*sin(TH3 - TH4) + 41)^(1/2)) + acos((16*cos(TH4) + 48*sin(TH3) + 96*sin(TH3 - TH4) - 1)/(8*(4*cos(TH4) + 12*sin(TH3) + 24*sin(TH3 - TH4) + 41)^(1/2)));
     PI = pi;
     params1 = [ 4,     0,  2,      TH0; ...
@@ -22,7 +22,7 @@ function ee = dofwdfast(TH0, TH1, TH2, TH3, TH4, HH, HL, varargin)
 %     end
 
 % % % % %     ee = cat(2, extractPose(T0toT{size(T0toT,1)}), THK);
-ee = extractPose(T0toT{size(T0toT,1)})    
+ee = extractPose2(T0toT{size(T0toT,1)})    
 
 %     params2 = [ 2, 0, 0,    -PI/2; ...
 %                 2, 0, 0, THK-PI/2; ...
