@@ -7,7 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 class Robot:
     TL = 13
     BL = 14
-    GL = 2
+    GL = 2.5
     FL = 2
     LL = 4
     t = 21
@@ -62,23 +62,7 @@ class Robot:
 
         THK = ALPHA + BETA - math.pi / 2
 
-            #     % -THY = TH3 + THK
-            #     % Z = self.t + 12 * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK)
-            #
-            #     Z = self.t + self.TL * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK);
-            #     THY = -(TH3 + THK);
-            #
-            #     dt = self.TL * math.cos(TH3) + self.HH * math.sin(-THY) + self.HL * math.cos(-THY);
-            #
-            #     THZ = TH0 + TH1 + TH2;
-            #
-            #     X = 4 * math.cos(TH0) + 4 * math.cos(TH0 + TH1) + dt * math.cos(THZ);
-            #     Y = 4 * math.sin(TH0) + 4 * math.sin(TH0 + TH1) + dt * math.sin(THZ);
-            #
-            #     THX = 0;
-            #
-            #
-            # end
+
 
         # ###################################################################
         # % -THY = TH3 + THK
@@ -120,7 +104,7 @@ class Robot:
         PKY = self.TL * math.sin(TH3) - self.FL * math.cos(TH3 + THK)
 
         F = math.sqrt(PKX ** 2 + (PKY) ** 2)
-        K = math.sqrt(PKX ** 2 + (PKY + 2) ** 2)
+        K = math.sqrt(PKX ** 2 + (PKY + self.GL) ** 2)
 
         ALPHA = math.acos((self.GL ** 2 + K ** 2 - F ** 2) / (self.GL * 2 * K))
         BETA = math.acos((K ** 2 + self.LL ** 2 - self.BL ** 2) / (K * self.LL * 2))
@@ -155,36 +139,6 @@ class Robot:
         BETA = math.acos((Q ** 2 + self.FL ** 2 - self.BL ** 2) / (2 * Q * self.FL))
 
         THK = ALPHA + BETA - math.pi / 2
-    
-        # Z = self.t + self.TL * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK);
-        # THY = -(TH3 + THK);
-
-        # dt = self.TL * math.cos(TH3) + self.HH * math.sin(-THY) + self.HL * math.cos(-THY);
-        # 
-        # THZ = TH0 + TH1 + TH2;
-
-        # X = 4 * math.cos(TH0) + 4 * math.cos(TH0 + TH1) + dt * math.cos(THZ);
-        # Y = 4 * math.sin(TH0) + 4 * math.sin(TH0 + TH1) + dt * math.sin(THZ);
-        # 
-        # THX = 0;
-
-        # pts = [0 0 0]
-        # pts(2,:) = pts(1,:)+ [4 * math.cos(TH0), 4 * math.sin(TH0), 0];
-        # pts(3,:) = pts(2,:)+ [4 * math.cos(TH0 + TH1), 4 * math.sin(TH0 + TH1), 0];
-        # pts(4,:) = pts(3,:)+ [0, 0, 21];
-        # 
-        # pts(5,:) = pts(4,:)+ [TL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3), self.TL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3), self.TL * math.sin(TH3)];
-        # pts(6,:) = pts(5,:)+ [HH * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.HH * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
-        #                       -HH * math.cos(TH3 + THK)];
-        # pts(7,:) = pts(6,:)+ [HL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3 + THK), self.HL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3 + THK),
-        #                       self.HL * math.sin(TH3 + THK)];
-
-        # pts2 = pts;
-        # pts2(6,:) = pts(5,:)+ [FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.FL * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
-        #                        -FL * math.cos(TH3 + THK)];
-        # pts2(8,:) = pts(4,:)+ [FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.FL * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
-        #                        -FL * math.cos(TH3 + THK)];
-
 
         XPTS = []
         XPTS.append(0)
@@ -194,8 +148,6 @@ class Robot:
         XPTS.append(XPTS[3] + self.TL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3))
         XPTS.append(XPTS[4] + self.HH * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK))
         XPTS.append(XPTS[5] + self.HL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3 + THK))
-        # XPTS[7] = XPTS[6] + self.FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK)
-        # XPTS[8] = XPTS[7] + self.FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK)
 
         YPTS = []
         YPTS.append(0)
