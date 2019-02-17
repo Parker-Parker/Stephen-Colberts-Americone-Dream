@@ -1,4 +1,7 @@
 import math
+import matplotlib
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class Robot:
@@ -13,23 +16,26 @@ class Robot:
     L0 = 4
     L1 = 4
 
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d', )
+
     def fwdKin(self, TH0, TH1, TH2, TH3, TH4):
 
 
-            #     function[X, Y, Z, THX, THY, THZ] = Forwardplswork(TH0, TH1, TH2, TH3, TH4, HH, HL)
+            #     function[X, Y, Z, THX, THY, THZ] = Forwardplswork(TH0, TH1, TH2, TH3, TH4, self.HH, self.HL)
             #
-            #         TL = 13;
-            #         BL = 14;
-            #         GL = 2;
-            #         FL = 2;
-            #         LL = 4;
-            #         t = 21;
+            #         self.TL = 13;
+            #         self.BL = 14;
+            #         self.GL = 2;
+            #         self.FL = 2;
+            #         self.LL = 4;
+            #         self.t = 21;
             #
-            #         PPY = -GL - LL * cos(TH4);
-            #         PPX = LL * sin(TH4);
+            #         PPY = -GL - self.LL * math.cos(TH4);
+            #         PPX = self.LL * math.sin(TH4);
             #
-            #         PQY = TL * sin(TH3);
-            #         PQX = TL * cos(TH3);
+            #         PQY = self.TL * math.sin(TH3);
+            #         PQX = self.TL * math.cos(TH3);
 
         PPY = -self.GL - self.LL * math.cos(TH4)
         PPX = self.LL * math.sin(TH4)
@@ -39,11 +45,11 @@ class Robot:
 
 
             #
-            #         P = sqrt(PPY ^ 2 + PPX ^ 2);
-            #         Q = sqrt((PPY - PQY) ^ 2 + (PPX - PQX) ^ 2);
+            #         P = sqrt(PPY ** 2 + PPX ** 2);
+            #         Q = sqrt((PPY - PQY) ** 2 + (PPX - PQX) ** 2);
             #
-            #         ALPHA = acos((Q ^ 2 + TL ^ 2 - P ^ 2) / (2 * Q * TL));
-            #         BETA = acos((Q ^ 2 + FL ^ 2 - BL ^ 2) / (2 * Q * FL));
+            #         ALPHA = acos((Q ** 2 + self.TL ** 2 - P ** 2) / (2 * Q * self.TL));
+            #         BETA = acos((Q ** 2 + self.FL ** 2 - self.BL ** 2) / (2 * Q * self.FL));
             #
             #         THK = ALPHA + BETA - pi / 2;
             #
@@ -57,17 +63,17 @@ class Robot:
         THK = ALPHA + BETA - math.pi / 2
 
             #     % -THY = TH3 + THK
-            #     % Z = t + 12 * sin(TH3) - HH * cos(TH3 + THK) + HL * sin(TH3 + THK)
+            #     % Z = self.t + 12 * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK)
             #
-            #     Z = t + TL * sin(TH3) - HH * cos(TH3 + THK) + HL * sin(TH3 + THK);
+            #     Z = self.t + self.TL * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK);
             #     THY = -(TH3 + THK);
             #
-            #     dt = TL * cos(TH3) + HH * sin(-THY) + HL * cos(-THY);
+            #     dt = self.TL * math.cos(TH3) + self.HH * math.sin(-THY) + self.HL * math.cos(-THY);
             #
             #     THZ = TH0 + TH1 + TH2;
             #
-            #     X = 4 * cos(TH0) + 4 * cos(TH0 + TH1) + dt * cos(THZ);
-            #     Y = 4 * sin(TH0) + 4 * sin(TH0 + TH1) + dt * sin(THZ);
+            #     X = 4 * math.cos(TH0) + 4 * math.cos(TH0 + TH1) + dt * math.cos(THZ);
+            #     Y = 4 * math.sin(TH0) + 4 * math.sin(TH0 + TH1) + dt * math.sin(THZ);
             #
             #     THX = 0;
             #
@@ -76,7 +82,7 @@ class Robot:
 
         # ###################################################################
         # % -THY = TH3 + THK
-        # % Z = t + 12 * sin(TH3) - HH * cos(TH3 + THK) + HL * sin(TH3 + THK)
+        # % Z = self.t + 12 * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK)
         # ###################################################################
 
         Z = self.t + self.TL * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK)
@@ -134,160 +140,89 @@ class Robot:
         print(X, Y, Z, THX, THY, THZ)
         print(X2, Y2, Z2, THX2, THY2, THZ2)
 
+        self.drawf(TH0, TH1, TH2, TH3, TH4)
 
-    """
+    def fwdKinPTS(self, TH0, TH1, TH2, TH3, TH4):
+        PPY = -self.GL - self.LL * math.cos(TH4)
+        PPX = self.LL * math.sin(TH4)
+        PQY = self.TL * math.sin(TH3)
+        PQX = self.TL * math.cos(TH3)
 
-    def invKin(self,X, Y, Z, THX, THY, THZ):
-        # function[TH0, TH1, TH2, TH3, TH4] = Inverseplswork(X, Y, Z, THX, THY, THZ, HH, HL)
-        # % UNTITLED
-        # Summary
-        # of
-        # this
-        # function
-        # goes
-        # here
-        # % Detailed
-        # explanation
-        # goes
-        # here
-        # TL = 13;
-        # BL = 14;
-        # L0 = 4;
-        # L1 = 4;
-        # % -THY = TH3 + THK
-        # % Z = t + 12 * sin(TH3) - HH * cos(TH3 + THK) + HL * sin(TH3 + THK)
-        # %
-        # % Z = t + 12 * sin(TH3) - HH * cos(-THY) + HL * sin(-THY)
-        # % -12 * sin(TH3) = t - Z - HH * cos(-THY) + HL * sin(-THY)
-        #
-        # TH3 = asin((21 - Z - HH * cos(-THY) + HL * sin(-THY)) / (-TL));
-        # THK = -THY - TH3;
-        #
-        # dt = TL * cos(TH3) + HH * sin(-THY) + HL * cos(-THY);
-        #
-        # % X = P2X + dt * cos(THZ)
-        # P2X = X - dt * cos(THZ);
-        # % Y = P2Y + dt * sin(THZ);
-        # P2Y = Y - dt * sin(THZ);
-        #
+        P = math.sqrt(PPY ** 2 + PPX ** 2)
+        Q = math.sqrt((PPY - PQY) ** 2 + (PPX - PQX) ** 2)
 
+        ALPHA = math.acos((Q ** 2 + self.TL ** 2 - P ** 2) / (2 * Q * self.TL))
+        BETA = math.acos((Q ** 2 + self.FL ** 2 - self.BL ** 2) / (2 * Q * self.FL))
 
+        THK = ALPHA + BETA - math.pi / 2
+    
+        # Z = self.t + self.TL * math.sin(TH3) - self.HH * math.cos(TH3 + THK) + self.HL * math.sin(TH3 + THK);
+        # THY = -(TH3 + THK);
 
+        # dt = self.TL * math.cos(TH3) + self.HH * math.sin(-THY) + self.HL * math.cos(-THY);
+        # 
+        # THZ = TH0 + TH1 + TH2;
 
-            ##############################################################################################
-        # % -THY = TH3 + THK
-        # % Z = t + 12 * sin(TH3) - HH * cos(TH3 + THK) + HL * sin(TH3 + THK)
-        # %
-        # % Z = t + 12 * sin(TH3) - HH * cos(-THY) + HL * sin(-THY)
-        # % -12 * sin(TH3) = t - Z - HH * cos(-THY) + HL * sin(-THY)
-            ##############################################################################################
+        # X = 4 * math.cos(TH0) + 4 * math.cos(TH0 + TH1) + dt * math.cos(THZ);
+        # Y = 4 * math.sin(TH0) + 4 * math.sin(TH0 + TH1) + dt * math.sin(THZ);
+        # 
+        # THX = 0;
 
-        TH3 = math.asin((self.t - Z - self.HH * math.cos(-THY) + self.HL * math.sin(-THY)) / (-self.TL))
-        THK = -THY - TH3
+        # pts = [0 0 0]
+        # pts(2,:) = pts(1,:)+ [4 * math.cos(TH0), 4 * math.sin(TH0), 0];
+        # pts(3,:) = pts(2,:)+ [4 * math.cos(TH0 + TH1), 4 * math.sin(TH0 + TH1), 0];
+        # pts(4,:) = pts(3,:)+ [0, 0, 21];
+        # 
+        # pts(5,:) = pts(4,:)+ [TL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3), self.TL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3), self.TL * math.sin(TH3)];
+        # pts(6,:) = pts(5,:)+ [HH * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.HH * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
+        #                       -HH * math.cos(TH3 + THK)];
+        # pts(7,:) = pts(6,:)+ [HL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3 + THK), self.HL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3 + THK),
+        #                       self.HL * math.sin(TH3 + THK)];
 
-        dt = self.TL * math.cos(TH3) + self.HH * math.sin(-THY) + self.HL * math.cos(-THY)
-
-        # % X = P2X + dt * math.cos(THZ)
-        P2X = X - dt * math.cos(THZ);
-        # % Y = P2Y + dt * math.sin(THZ);
-        P2Y = Y - dt * math.sin(THZ);
+        # pts2 = pts;
+        # pts2(6,:) = pts(5,:)+ [FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.FL * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
+        #                        -FL * math.cos(TH3 + THK)];
+        # pts2(8,:) = pts(4,:)+ [FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK), self.FL * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK),
+        #                        -FL * math.cos(TH3 + THK)];
 
 
-        # % TH2 = 2345676543456789876567890 %???????????????? KHAAAAAAAANNNNNN!!!!!!!!!
-        #
-        # % P2X = 4 * cos(TH0) + 4 * cos(TH0 + TH1);
-        # % P2Y = 4 * sin(TH0) + 4 * sin(TH0 + TH1);
-        #
-        # % % % % % TH0 = 2 * atan2((8 * P2Y + (- P2X ^ 4 - 2 * P2X ^ 2 * P2Y ^ 2 + 64 * P2X ^ 2 - P2Y ^ 4 + 64 * P2Y ^ 2) ^ (1 / 2)),(P2X ^ 2 + 8 * P2X + P2Y ^ 2));
-        # % % % % % TH0 = 2 * atan2((8 * P2Y - (- P2X ^ 4 - 2 * P2X ^ 2 * P2Y ^ 2 + 64 * P2X ^ 2 - P2Y ^ 4 + 64 * P2Y ^ 2) ^ (1 / 2)),(P2X ^ 2 + 8 * P2X + P2Y ^ 2));
-        # % % % % %
-        # % % % % % TH1 = -2 * atan2((-(P2X ^ 2 + P2Y ^ 2) * (P2X ^ 2 + P2Y ^ 2 - 64)) ^ (1 / 2), (P2X ^ 2 + P2Y ^ 2));
-        # % % % % % TH1 = 2 * atan2((-(P2X ^ 2 + P2Y ^ 2) * (P2X ^ 2 + P2Y ^ 2 - 64)) ^ (1 / 2), (P2X ^ 2 + P2Y ^ 2));
-        #
-        # THR = atan2(P2Y, P2X);
-        # R = sqrt(P2X ^ 2 + P2Y ^ 2);
-        #
-        # GAMMA = acos((L0 ^ 2 + R ^ 2 - L1 ^ 2) / (2 * L0 * R));
-        #
-        # % RIGHT
-        # TH0 = THR - GAMMA;
-        # TH1 = 2 * GAMMA;
-        THR = math.atan2(P2Y, P2X)
-        R = math.sqrt(P2X ** 2 + P2Y ** 2)
+        XPTS = []
+        XPTS.append(0)
+        XPTS.append(XPTS[0] + self.L0 * math.cos(TH0))
+        XPTS.append(XPTS[1] + self.L1 * math.cos(TH0 + TH1))
+        XPTS.append(XPTS[2] + 0)
+        XPTS.append(XPTS[3] + self.TL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3))
+        XPTS.append(XPTS[4] + self.HH * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK))
+        XPTS.append(XPTS[5] + self.HL * math.cos(TH0 + TH1 + TH2) * math.cos(TH3 + THK))
+        # XPTS[7] = XPTS[6] + self.FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK)
+        # XPTS[8] = XPTS[7] + self.FL * math.cos(TH0 + TH1 + TH2) * math.sin(TH3 + THK)
 
-        GAMMA = math.acos((self.L0 ** 2 + R ** 2 - self.L1 ^ 2) / (2 * self.L0 * R));
+        YPTS = []
+        YPTS.append(0)
+        YPTS.append(YPTS[0] + self.L0 * math.sin(TH0))
+        YPTS.append(YPTS[1] + self.L1 * math.sin(TH0 + TH1))
+        YPTS.append(YPTS[2] + 0)
+        YPTS.append(YPTS[3] + self.TL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3))
+        YPTS.append(YPTS[4] + self.HH * math.sin(TH0 + TH1 + TH2) * math.sin(TH3 + THK))
+        YPTS.append(YPTS[5] + self.HL * math.sin(TH0 + TH1 + TH2) * math.cos(TH3 + THK))
 
-        # % RIGHT
-        TH0 = THR - GAMMA
-        TH1 = 2 * GAMMA
+        ZPTS = []
+        ZPTS.append(0)
+        ZPTS.append(ZPTS[0] + 0)
+        ZPTS.append(ZPTS[1] + 0)
+        ZPTS.append(ZPTS[2] + self.t)
+        ZPTS.append(ZPTS[3] + self.TL * math.sin(TH3))
+        ZPTS.append(ZPTS[4] - self.HH * math.cos(TH3 + THK))
+        ZPTS.append(ZPTS[5] + self.HL * math.sin(TH3 + THK))
+        return [XPTS, YPTS, ZPTS]
 
-        # ################################
-        # % % % % % % LEFT
-        # % % % % % TH0 = THR + GAMMA;
-        # % % % % % TH1 = -2 * GAMMA;
-        # ################################
+    def drawf(self, TH0, TH1, TH2, TH3, TH4):
+        [xs, ys, zs] = self.fwdKinPTS(TH0, TH1, TH2, TH3, TH4)
+        self.ax.axis('equal')
 
-        #
-        # % NOW
-        # IS
-        # THE
-        # TIME
-        # TH2 = THZ - TH0 - TH1;
-        # % TO
-        # DIME
-        #
-        # % THK: TH4
-        # DUDE
-        # its
-        # its
-        # own
-        # thing...like
-        # holy
-        # shit
-        # % TH4 = "KEKSAUCE"
-        # % F = sqrt((2 * 2 * TL) * cos(pi / 2 + THK) - TL ^ 2 - 2 ^ 2);
-        #
-        # PKX = TL * cos(TH3) + 2 * sin(TH3 + THK);
-        # PKY = TL * sin(TH3) - 2 * cos(TH3 + THK);
-        #
-        # F = sqrt(PKX ^ 2 + (PKY) ^ 2);
-        # K = sqrt(PKX ^ 2 + (PKY + 2) ^ 2);
-        #
-        # ALPHA = acos((2 ^ 2 + K ^ 2 - F ^ 2) / (2 * 2 * K));
-        # BETA = acos((K ^ 2 + 4 ^ 2 - BL ^ 2) / (K * 4 * 2));
-        # TH4 = pi - ALPHA - BETA;
-
-        # % TH4 = "KEKSAUCE"
-        # % F = sqrt((2 * 2 * TL) * cos(pi / 2 + THK) - TL ^ 2 - 2 ^ 2);
-
-        PKX = self.TL * math.cos(TH3) + 2 * math.sin(TH3 + THK)
-        PKY = self.TL * math.sin(TH3) - 2 * math.cos(TH3 + THK)
-
-        F = math.sqrt(PKX ** 2 + (PKY) ** 2)
-        K = math.sqrt(PKX ** 2 + (PKY + 2) ** 2)
-
-        ALPHA = math.acos((2 ** 2 + K ** 2 - F ** 2) / (2 * 2 * K))
-        BETA = math.acos((K ** 2 + 4 ** 2 - self.BL ** 2) / (K * 4 * 2))
-        TH4 = math.pi - ALPHA - BETA
-
-        # % ITS
-        # THE
-        # TIME
-        # OF
-        # THE
-        # SEASON
-        # outputArg1 = 1;
-        # outputArg2 = 2;
-        #
-        # % SOMETHIN
-        # SOMETHIN
-        # GOOD
-        # REASON
-        # end
-        return TH0, TH1, TH2, TH3, TH4
-        
-        """
-
+        self.ax.plot(xs, ys, zs)
+        # print((xs, ys, zs))
+        self.fig.show()
 
 r = Robot()
 r.testKin()
