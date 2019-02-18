@@ -25,8 +25,9 @@ v2 = 0
 v3 = 0
 v4 = 0
 v5 = 0
-
+s1 = "+"
 # ser.write(b'100,100,200,100,330;')
+i = 0
 while(1):
 
     if(int(v1)>=0):
@@ -56,6 +57,14 @@ while(1):
     # print(bytearray())
     # print(ser.read_all().strip(b'\r\n'))
     print(ser.read_all().strip(b'\r\n'))
-    v5 = (int(v5)-1)%360-360
+    v5 = -5
+    # if(i>10):
+    #     v5 = 1
+    # if(i<-10):
+    #     v5 = -1
+    # if up:
+    #     v5 = (int(v5)+1)
+    # else:
+    #     v5 = (int(v5)-1)
     v1 = v5
     v2 = v5
