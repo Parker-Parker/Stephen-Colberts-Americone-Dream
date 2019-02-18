@@ -1,92 +1,78 @@
 import time
 
 import serial
-# import struct
+
+class RobotComs:
+    ser = serial.Serial()
+    ser.baudrate = 9600
+    ser.port = 'COM14'
+
+    def setPort(self, port):
+        self.ser.port = port
+
+    def sendListen(self, inputs):
+        self.sendCommand(inputs)
+        ret = self.ser.read_all()
+        print(ret)
+        return ret
+
+    def sendCommand(self, inputs):
+        if len(inputs) == 5:
+            signed = {("+" if int(n) >= 0 else "-") + str(abs(int(n))).zfill(3) for n in inputs}
+            output = "".join(signed)
+            try:
+                print(output)
+                self.ser.write(output.encode("ASCII"))
+            except:
+                pass
+
+        elif len(inputs) == 20:
+            try:
+                print(inputs)
+                self.ser.write(str(inputs).encode("ASCII"))
+            except:
+                pass
+        else:
+            print("something is wrong")
+
+    def startRobotComs(self):
+        self.ser = serial.Serial()
+        self.ser.baudrate = 9600
+        self.ser.port = 'COM14'
+        self.ser.open()
+
+    def runDemo(self):
+        self.startRobotComs()
+        while(1):
+            printme = "-022-022+000+000+000"
+            self.ser.write(printme.encode("ASCII","ignore"))
+            print("send and sleep")
+            print(self.ser.read_all().strip(b'\r\n'))
+            time.sleep(2)
+            # print(bytearray())
+            # print(ser.read_all().strip(b'\r\n'))
+            #######################################
+
+            printme = "+020+020+000+000+000"
+            self.ser.write(printme.encode("ASCII","ignore"))
+            print("send and sleep")
+            print(self.ser.read_all().strip(b'\r\n'))
+            # v5 = -5
+            # if(i>10):
+            #     v5 = 1
+            # if(i<-10):
+            #     v5 = -1
+            # if up:
+            #     v5 = (int(v5)+1)
+            # else:
+            #     v5 = (int(v5)-1)
+            # v1 = v5
+            # v2 = v5
 
 
-# def makeBytes(intToSend):
-#     char0 = intToSend//256
-#     char1 = intToSend % 256
-#     struct.pack('>B', char0, char1)
-#     return None
-#
-# print(makeBytes(30))
-# print(makeBytes(30000))
+            # time.sleep(.2)
 
-print(str(-2).zfill(3))
-
-ser = serial.Serial()
-ser.baudrate = 9600
-ser.port = 'COM14'
-ser.open()
-command = ""
-v1 = 5
-v2 = 0
-v3 = 0
-v4 = 0
-v5 = 0
-s1 = "+"
-# ser.write(b'100,100,200,100,330;')
-i = 0
-while(1):
-    #
-    # if(int(v1)>=0):
-    #     s1 = "+"
-    # else:
-    #     s1 = "-"
-    #
-    # s2 = str(v2).zfill(3)
-    # s3 = str(v3).zfill(3)
-    # s4 = str(v4).zfill(3)
-    # s5 = str(v5).zfill(3)
-    #
-    #
-    # v1 = str(abs(int(v1))).zfill(3)
-    # v2 = str(abs(int(v2))).zfill(3)
-    # v3 = str(abs(int(v3))).zfill(3)
-    # v4 = str(abs(int(v4))).zfill(3)
-    # v5 = str(abs(int(v5))).zfill(3)
-    #
-    # printme = s1+v1+"+"+v2+"+"+v3+"+"+v4+"+"+v5
-    # print(printme)
-    # # time.sleep(.5)
-    # # for n in printme.encode("ASCII","ignore"):
-    # ser.write(printme.encode("ASCII","ignore"))
-    # print("send and sleep")
-    time.sleep(2)
-    # print(bytearray())
-    # print(ser.read_all().strip(b'\r\n'))
-    #######################################
-
-    printme = "-022-022+000+000+000"
-    ser.write(printme.encode("ASCII","ignore"))
-    print("send and sleep")
-    print(ser.read_all().strip(b'\r\n'))
-    time.sleep(2)
-    # print(bytearray())
-    # print(ser.read_all().strip(b'\r\n'))
-    #######################################
-
-    printme = "+020+020+000+000+000"
-    ser.write(printme.encode("ASCII","ignore"))
-    print("send and sleep")
-    print(ser.read_all().strip(b'\r\n'))
-    # v5 = -5
-    # if(i>10):
-    #     v5 = 1
-    # if(i<-10):
-    #     v5 = -1
-    # if up:
-    #     v5 = (int(v5)+1)
-    # else:
-    #     v5 = (int(v5)-1)
-    # v1 = v5
-    # v2 = v5
-
-
-    # time.sleep(.2)
-
-    # printme = "-001-001+015+015+015"
-    # ser.write(printme.encode("ASCII","ignore"))
-    # print("send and sleep")
-    # print(ser.read_all().strip(b'\r\n'))
+            # printme = "-001-001+015+015+015"
+            # ser.write(printme.encode("ASCII","ignore"))
+            # print("send and sleep")
+            # print(ser.read_all().strip(b'\r\n'))
