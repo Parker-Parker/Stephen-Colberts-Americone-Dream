@@ -11,13 +11,19 @@ breaktime = time.time()
 while(1):
     last = time.time()
     # time.sleep(.1)
-    printme = "+024+024+000+000+000"
+    printme = "+333+222+000+000+000"
     ser.write(printme.encode("ASCII","ignore"))
     # time.sleep(.1)
-    print("positive")
+
+
+    # print("positive")
+
+
     xx = ser.read(20).strip(b'\r\n')
     print(xx)
+    """
     print(time.time()-last)
+    
     #
     # if (not xx == "+024+024+000+000+000".encode("ASCII")) and stillgood and (i>4):
     #     stillgood = False
@@ -31,3 +37,4 @@ while(1):
 
     print("still working at " + str(time.time() - breaktime)+"s at a rate of titties")
 
+    """
