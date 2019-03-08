@@ -1,7 +1,7 @@
 import math
-import matplotlib
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
 
 
 class Robot:
@@ -166,16 +166,16 @@ class Robot:
         ZPTS.append(ZPTS[5] + self.HL * math.sin(TH3 + THK))
         return [XPTS, YPTS, ZPTS]
 
-    def drawf(self, TH0, TH1, TH2, TH3, TH4):
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(111, projection='3d', )
-
-        [xs, ys, zs] = self.fwdKinPTS(TH0, TH1, TH2, TH3, TH4)
-        self.ax.axis('equal')
-
-        self.ax.plot(xs, ys, zs)
-        # print((xs, ys, zs))
-        self.fig.show()
+    # def drawf(self, TH0, TH1, TH2, TH3, TH4):
+    #     self.fig = plt.figure()
+    #     self.ax = self.fig.add_subplot(111, projection='3d', )
+    #
+    #     [xs, ys, zs] = self.fwdKinPTS(TH0, TH1, TH2, TH3, TH4)
+    #     self.ax.axis('equal')
+    #
+    #     self.ax.plot(xs, ys, zs)
+    #     # print((xs, ys, zs))
+    #     self.fig.show()
 
 
 if __name__ == '__main__':
