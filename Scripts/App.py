@@ -13,6 +13,8 @@ from kivy.graphics import Color, Ellipse, Line
 
 from kivy.uix.slider import Slider
 from kivy.uix.filechooser import FileChooserIconView
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 
 # class MyPaintWidget(Widget):
 #
@@ -28,11 +30,29 @@ from kivy.uix.filechooser import FileChooserIconView
 #         touch.ud['line'].points += [touch.x, touch.y]
 
 
-class SerialCommsPanel(Widget):
+class PositionSlider(BoxLayout):
+    def __init__(self):
+        super().__init__(orientation='horizontal')
+        self.add_widget(Slider(min=-100, max=100, value=25))
+        self.add_widget(Label(text="000", size_hint_max_x = 50))
+        self.add_widget(Label(text="000", size_hint_max_x = 50))
+
+
+class SerialCommsPanel(BoxLayout):
     pass
 
 
-class PositionalPanel(Widget):
+class PositionalJointPanel(BoxLayout):
+    def __init__(self):
+        super().__init__(orientation='vertical')#, size_hint=(.5,.5))
+        self.add_widget(PositionSlider())
+        self.add_widget(PositionSlider())
+        self.add_widget(PositionSlider())
+        self.add_widget(PositionSlider())
+        self.add_widget(PositionSlider())
+
+
+class PositionalWorldPanel(Widget):
     pass
 
 
@@ -47,15 +67,10 @@ class TrajectoryPanel(Widget):
 class GUIApp(App):
 
     def build(self):
-        parent = Widget()
-        # self.painter = MyPaintWidget()
-        clearbtn = Button(text='Clear')
-        clearbtn.bind(on_release=self.clear_canvas)
-        parent.add_widget(self.painter)
+        parent = PositionalJointPanel()
+
         return parent
 
-    def clear_canvas(self, obj):
-        self.painter.canvas.clear()
 
 
 if __name__ == '__main__':

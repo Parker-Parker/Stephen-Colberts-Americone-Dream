@@ -16,8 +16,6 @@ class Robot:
     L0 = 4
     L1 = 4
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d', )
 
     def fwdKin(self, TH0, TH1, TH2, TH3, TH4):
 
@@ -169,6 +167,9 @@ class Robot:
         return [XPTS, YPTS, ZPTS]
 
     def drawf(self, TH0, TH1, TH2, TH3, TH4):
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111, projection='3d', )
+
         [xs, ys, zs] = self.fwdKinPTS(TH0, TH1, TH2, TH3, TH4)
         self.ax.axis('equal')
 
@@ -176,8 +177,10 @@ class Robot:
         # print((xs, ys, zs))
         self.fig.show()
 
-r = Robot()
-r.testKin()
+
+if __name__ == '__main__':
+    r = Robot()
+    r.testKin()
 
 
 
