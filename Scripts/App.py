@@ -1,27 +1,62 @@
+from kivy.config import Config
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+from random import random
 from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivy.uix.widget import Widget
+from kivy.uix.button import Button
+from kivy.graphics import Color, Ellipse, Line
+
+from kivy.uix.slider import Slider
+from kivy.uix.filechooser import FileChooserIconView
+
+# class MyPaintWidget(Widget):
+#
+#     def on_touch_down(self, touch):
+#         color = (random(), 1, 1)
+#         with self.canvas:
+#             Color(*color, mode='hsv')
+#             d = 30.
+#             Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
+#             touch.ud['line'] = Line(points=(touch.x, touch.y))
+#
+#     def on_touch_move(self, touch):
+#         touch.ud['line'].points += [touch.x, touch.y]
 
 
-class LoginScreen(GridLayout):
-
-    def __init__(self, **kwargs):
-        super(LoginScreen, self).__init__(**kwargs)
-        self.cols = 2
-        self.add_widget(Label(text='User Name'))
-        self.username = TextInput(multiline=False)
-        self.add_widget(self.username)
-        self.add_widget(Label(text='password'))
-        self.password = TextInput(password=True, multiline=False)
-        self.add_widget(self.password)
+class SerialCommsPanel(Widget):
+    pass
 
 
-class MyApp(App):
+class PositionalPanel(Widget):
+    pass
+
+
+class NubInfoPanel(Widget):
+    pass
+
+
+class TrajectoryPanel(Widget):
+    pass
+
+
+class GUIApp(App):
 
     def build(self):
-        return LoginScreen()
+        parent = Widget()
+        # self.painter = MyPaintWidget()
+        clearbtn = Button(text='Clear')
+        clearbtn.bind(on_release=self.clear_canvas)
+        parent.add_widget(self.painter)
+        return parent
+
+    def clear_canvas(self, obj):
+        self.painter.canvas.clear()
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    GUIApp().run()
