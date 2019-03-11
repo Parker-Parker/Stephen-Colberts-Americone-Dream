@@ -1,7 +1,44 @@
 import math
+from serial.tools.list_ports import comports
+import serial
 # import matplotlib
 # import matplotlib.pyplot as plt
 # from mpl_toolkits.mplot3d import Axes3D
+
+class Comms:
+    def __init__(self):
+        self.serialPort = serial.Serial()
+
+        self.availableDevices = []
+        self.availableDeviceDescriptions = []
+        self.availablePorts = []
+        for i in comports():
+            self.availablePorts.append(i)
+            self.availableDevices.append(i.device)
+            self.availableDeviceDescriptions.append(i.description)
+        [self.serialPort.setPort(i.device) for i in self.availablePorts if i.description == "1234567876543234567"]
+        [self.serialPort.setPort(i.device) for i in self.availablePorts if i.device == "COM12" or i.device == "COM14"]
+
+
+    def printPortDebug(self):
+        self.serialPort = serial.Serial()
+        self.availablePorts = comports()
+
+        for i in self.availablePorts:
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print("Prod: "+str(i.product))
+            print("Dev: "+str(i.device))
+            print("Desc: "+str(i.description))
+            print("Name: "+str(i.name))
+            print("Location: "+str(i.location))
+            print("Int: "+str(i.interface))
+            print("Man: "+str(i.manufacturer))
+            print("Prod: "+str(i.product))
+        # self.availablePortNames = [i.name for i in self.availablePorts]
+        # self.availablePortLocations = [i.location for i in self.availablePorts]
+        # self.availablePortDescs = [i.description for i in self.availablePorts]
+        # self.availablePortDevs = [i.device for i in self.availablePorts]
+        # self.availablePortProds = [i.product for i in self.availablePorts]
 
 
 class Robot:
@@ -16,10 +53,10 @@ class Robot:
     L0 = 4
     L1 = 4
 
+    def __init__(self):
+        pass
 
     def fwdKin(self, TH0, TH1, TH2, TH3, TH4):
-
-
             #     function[X, Y, Z, THX, THY, THZ] = Forwardplswork(TH0, TH1, TH2, TH3, TH4, self.HH, self.HL)
             #
             #         self.TL = 13;
@@ -79,7 +116,7 @@ class Robot:
 
         THX = 0
 
-        return X, Y, Z, THX, THY, THZ;
+        return X, Y, Z, THX, THY, THZ
 
     def invKin(self,X, Y, Z, THX, THY, THZ):
 
@@ -122,7 +159,7 @@ class Robot:
         print(X, Y, Z, THX, THY, THZ)
         print(X2, Y2, Z2, THX2, THY2, THZ2)
 
-        self.drawf(TH0, TH1, TH2, TH3, TH4)
+        # self.drawf(TH0, TH1, TH2, TH3, TH4)
 
     def fwdKinPTS(self, TH0, TH1, TH2, TH3, TH4):
         PPY = -self.GL - self.LL * math.cos(TH4)
