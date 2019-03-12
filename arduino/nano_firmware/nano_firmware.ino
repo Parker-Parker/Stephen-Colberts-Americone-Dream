@@ -7,8 +7,8 @@
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         4
-#define PWM_PIN           5
-#define DIR_PIN           6
+#define PWM_PIN           3
+#define DIR_PIN           2
 #define POT_PIN           A1
 #define ENC_PIN           8
 
@@ -17,7 +17,8 @@ byte sentPosition[SENT_SIZE];
 
 int setPoint = 0;
 int currPosition = 0;
-int GAIN = 5;
+//int GAIN = 5;
+int GAIN = 270;
 
 void setup() {
   Wire.begin(SLAVE_ADDRESS);
@@ -25,14 +26,14 @@ void setup() {
   Wire.onReceive(receiveEvent);
   pinMode(PWM_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
-  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
+  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,269);
   setPoint = currPosition;
   Serial.begin(9600);
 }
 
 void loop() {
-  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
-  int duty = GAIN*(setPoint - currPosition)/360;
+  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,269);
+  int duty = (GAIN*(setPoint - currPosition))/270;
   if(duty < 0){
     duty = duty*-1;
     digitalWrite(DIR_PIN, HIGH);
@@ -41,6 +42,14 @@ void loop() {
     digitalWrite(DIR_PIN, LOW);
   }
   analogWrite(PWM_PIN, duty);
+//    Serial.println(duty);
+//    Serial.print("Duty: ");
+//    Serial.print(duty);
+//    Serial.print(" // Current: ");
+//    Serial.print(currPosition);
+//    Serial.print(" // Target: ");
+//    Serial.println(setPoint);
+
 }
 
 void requestEvent(){
@@ -69,4 +78,9 @@ void receiveEvent(int bytesReceived){
 void get_byte_position(){
   sentPosition[0] = (currPosition & 255); 
   sentPosition[1] = (currPosition & (255<<8))>>8;
+}
+
+void serialEvent() {    
+    setPoint = (((Serial.parseInt())%270));
+    
 }

@@ -2,7 +2,7 @@ import math
 from serial.tools.list_ports import comports
 import serial
 import time
-# import matplotlib
+import matplotlib
 # import matplotlib.pyplot as plt
 # from mpl_toolkits.mplot3d import Axes3D
 
@@ -54,7 +54,17 @@ class Comms:
         print("regend")
     def parseLine(self):
         if self.serialPort.is_open:
-            self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+            # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+            v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
+            v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
+            v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
+            v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
+            v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+
+            self.serialPort.write((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+            print((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+
+
             if self.serialPort.in_waiting < 40:
                 # print("waiting for message: "+str(self.serialPort.in_waiting))
                 pass
@@ -133,23 +143,26 @@ class Comms:
 
 
 class Robot:
-    __TL = 13
-    __BL = 14
+    __TL = 13.
+    __BL = 14.
     __GL = 2.5
-    __FL = 2
-    __LL = 4
-    __T = 21
-    __HH = 1
-    __HL = 2
-    __L0 = 4
-    __L1 = 4
+    __FL = 2.
+    __LL = 4.
+    __T = 21.
+    __HH = 1.
+    __HL = 2.
+    __L0 = 4.
+    __L1 = 4.
 
 
     def __init__(self):
         self.nub = [0]*5
         self.joints = [0]*5
+        self.jointTargets = [0]*5
         self.comms = Comms()
         self.comms.registerRobot(self)
+        self.calVals = self.nub.copy()
+
 
     def fwdKin(self, TH0, TH1, TH2, TH3, TH4):
             #     function[X, Y, Z, THX, THY, THZ] = Forwardplswork(TH0, TH1, TH2, TH3, TH4, self.HH, self.HL)
@@ -315,12 +328,49 @@ class Robot:
         print(self.nub)
         time.sleep(.1)
 
+    def calibrate(self):
+        self.comms.parseLine()
+        self.calVals = self.nub.copy()
+        self.comms.parseLine()
+        self.calVals = self.nub.copy()
+
+
+    def demoZ(self):
+        self.comms.parseLine()
+        # print(self.joints)
+        print(self.nub)
+        calz1 = self.nub[1]-self.calVals[1]
+        calz2 = self.nub[4]-self.calVals[4]
+        torque = calz1-calz2
+        force = calz1+calz2
+
+        gainF = .0001
+        gainT = .001
+
+        dZ = gainF*force
+        dP = gainT*torque
+
+        # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[1],self.joints[0])
+        # self.worldTarg = self.world.copy()
+        # self.jointTargets = self.invKin(self.worldTarg)
+
+        self.jointTargets[1] = int(self.joints[1] -dZ)
+        self.jointTargets[0] = int(self.joints[0] -dP)
+
+        # POSITIVE DOWN
+        # NUB ARRAY 2ND AND 5TH VALUES
+
+
+        time.sleep(.1)
+
+
 if __name__ == '__main__':
     r = Robot()
     # r.testKin()
     while True:
         # print('hoi')
-        r.main()
+        # r.main()
+        r.demoZ()
     pass
 
 

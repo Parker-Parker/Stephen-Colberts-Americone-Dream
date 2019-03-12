@@ -1,8 +1,8 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-#define SLAVE_ADDRESS     0x23  //base motor furthest
-//#define SLAVE_ADDRESS     0x24  //base motor elbow
+//#define SLAVE_ADDRESS     0x23  //base motor furthest
+#define SLAVE_ADDRESS     0x24  //base motor elbow
 //#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
@@ -10,8 +10,10 @@
 #define PWM_PIN           5
 #define DIR_PIN           6
 #define POT_PIN           A1
-#define ENC_PIN           2
-#define ENC2_PIN          3
+#define ENC_PIN           3
+#define ENC2_PIN          2
+//#define ENC_PIN           2
+//#define ENC2_PIN          3
 #define ENC_TICKS         6400
 
 
@@ -154,8 +156,8 @@ void loop() {
   else{
     digitalWrite(DIR_PIN, LOW);
   }
-  if(duty > 120){
-    duty = 120;
+  if(duty > 70){
+    duty = 70;
   }
 
   

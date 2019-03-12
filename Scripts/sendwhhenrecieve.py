@@ -10,16 +10,19 @@ stillgood = True
 breaktime = time.time()
 while(1):
     last = time.time()
-    # time.sleep(.1)
-    printme = "+333+222+000+000+000"
+    time.sleep(.1)
+    printme = "+135+135+000+000+000"
     ser.write(printme.encode("ASCII","ignore"))
-    # time.sleep(.1)
+    time.sleep(.1)
 
 
     # print("positive")
 
 
-    xx = ser.read(20).strip(b'\r\n')
+    # xx = ser.read(20).strip(b'\r\n')
+    # print(xx)
+
+    xx = ser.read_all().strip(b'\r\n')
     print(xx)
     """
     print(time.time()-last)
