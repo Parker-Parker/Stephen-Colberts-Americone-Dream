@@ -50,6 +50,25 @@ void loop() {
 //    Serial.print(" // Target: ");
 //    Serial.println(setPoint);
 
+  Serial.print("Current: ");
+  Serial.print(currPosition);
+  Serial.print("    Set: ");
+  Serial.print(setPoint);
+  Serial.print("    Diff: ");
+  Serial.print(setPoint - currPosition);
+  Serial.print("    Duty: ");
+  Serial.print(duty);
+  Serial.print("    Gain: ");
+  Serial.print(GAIN);
+  Serial.print("    GD: ");
+  Serial.print(GAIN*(setPoint - currPosition));
+  Serial.print("    GDD: ");
+  Serial.print((GAIN*(setPoint - currPosition))/360);
+  Serial.print("    GDD: ");
+  Serial.print(GAIN*(setPoint - currPosition)/360);
+  Serial.print("    Dir: ");
+  Serial.println(digitalRead(DIR_PIN));
+
 }
 
 void requestEvent(){
@@ -63,6 +82,7 @@ void receiveEvent(int bytesReceived){
     if(i < RECIEVED_SIZE)
     {
       recievedSetPoint[i] = Wire.read();
+      Serial.println(recievedSetPoint[i]);
     }
     else
     {

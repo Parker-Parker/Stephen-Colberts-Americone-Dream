@@ -10,8 +10,11 @@
 #define PWM_PIN           5
 #define DIR_PIN           6
 #define POT_PIN           A1
+////////////  0x24  //////////
 #define ENC_PIN           3
 #define ENC2_PIN          2
+
+////////////  0x23  //////////
 //#define ENC_PIN           2
 //#define ENC2_PIN          3
 #define ENC_TICKS         6400

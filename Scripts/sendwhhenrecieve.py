@@ -4,6 +4,7 @@ import serial
 ser = serial.Serial()
 ser.baudrate = 9600
 ser.port = 'COM14'
+# ser.port = 'COM12'
 ser.open()
 i = 0
 stillgood = True
