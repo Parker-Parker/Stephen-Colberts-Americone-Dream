@@ -30,7 +30,7 @@ byte sentPosition[SENT_SIZE];
 
 volatile int setPoint = 0;
 volatile int currPosition = 0;
-long GAIN = 2000;
+long GAIN = 20;
 
 volatile bool enc1 = true;
 volatile bool enc2 = true;
@@ -145,7 +145,7 @@ void setup() {
   Serial.begin(9600);
 }
 
-
+int reportedPos = 0;
 int asdf = 0;
 long duty;
 void loop() {
@@ -166,7 +166,39 @@ void loop() {
 //  }
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
+  
   currPosition = (ticks*360)/ENC_TICKS;
+//
+////  
+//////  //start average code
+//////  reportedPos = (ticks*360)/ENC_TICKS;
+//////  
+//////  int p = currPosition - reportedPos;  
+//////  while(p<0){
+//////    p+=(360);
+//////  }
+//////  p = p%360;
+//////
+//////  if(p>180){
+//////    if(currPosition>reportedPos){
+//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;  
+//////    }
+//////    else {
+//////      currPosition = (currPosition*4 +reportedPos)/5;
+//////    }
+//////  }
+//////  
+//////  if(p<180){
+//////    if(currPosition>reportedPos){
+//////      currPosition = (currPosition*4 +reportedPos)/5;
+//////    }
+//////    else {    
+//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;  
+//////      }
+//////  }
+//////  //end average code
+////
+//
   
   int error = (setPoint - currPosition);
   if (error>180){
