@@ -242,30 +242,35 @@ class Robot:
         except:
             raise UpperLinkInverseError("could not solve for TH3 (Check Z and THY):")
         try:
-        THK = - THY - TH3
-        dt = self.__TL * math.cos(TH3) + self.__HH * math.sin(-THY) + self.__HL * math.cos(-THY)
-        P2X = X - dt * math.cos(THZ)
-        P2Y = Y - dt * math.sin(THZ)
-        THR = math.atan2(P2Y, P2X)
-        R = math.sqrt(P2X ** 2 + P2Y ** 2)
-        GAMMA = math.acos((self.__L0 ** 2 + R ** 2 - self.__L1 ** 2) / (2 * self.__L0 * R))
-        # % RIGHT
-        TH0 = THR - GAMMA
-        TH1 = 2 * GAMMA
-        # % % LEFT
-        # % TH0 = THR + GAMMA;
-        # % TH1 = -2 * GAMMA;
-        TH2 = THZ - TH0 - TH1
+            THK = - THY - TH3
+            dt = self.__TL * math.cos(TH3) + self.__HH * math.sin(-THY) + self.__HL * math.cos(-THY)
+            P2X = X - dt * math.cos(THZ)
+            P2Y = Y - dt * math.sin(THZ)
+            THR = math.atan2(P2Y, P2X)
+            R = math.sqrt(P2X ** 2 + P2Y ** 2)
+            GAMMA = math.acos((self.__L0 ** 2 + R ** 2 - self.__L1 ** 2) / (2 * self.__L0 * R))
+            # % RIGHT
+            TH0 = THR - GAMMA
+            TH1 = 2 * GAMMA
+            # % % LEFT
+            # % TH0 = THR + GAMMA;
+            # % TH1 = -2 * GAMMA;
+            TH2 = THZ - TH0 - TH1
+        except:
+            raise LowerLinkInverseError("could not solve for TH0 TH1 TH2 (Check THZ THY TH3):")
+
         PKX = self.__TL * math.cos(TH3) + self.__FL * math.sin(TH3 + THK)
         PKY = self.__TL * math.sin(TH3) - self.__FL * math.cos(TH3 + THK)
 
         F = math.sqrt(PKX ** 2 + (PKY) ** 2)
         K = math.sqrt(PKX ** 2 + (PKY + self.__GL) ** 2)
 
-        ALPHA = math.acos((self.__GL ** 2 + K ** 2 - F ** 2) / (self.__GL * 2 * K))
-        BETA = math.acos((K ** 2 + self.__LL ** 2 - self.__BL ** 2) / (K * self.__LL * 2))
-        TH4 = math.pi - ALPHA - BETA
-
+        try:
+            ALPHA = math.acos((self.__GL ** 2 + K ** 2 - F ** 2) / (self.__GL * 2 * K))
+            BETA = math.acos((K ** 2 + self.__LL ** 2 - self.__BL ** 2) / (K * self.__LL * 2))
+            TH4 = math.pi - ALPHA - BETA
+        except:
+            raise UpperLinkInverseError("could not solve for TH4 (Check TH3 and THK):")
         return TH0, TH1, TH2, TH3, TH4
 
     def testKin(self):
