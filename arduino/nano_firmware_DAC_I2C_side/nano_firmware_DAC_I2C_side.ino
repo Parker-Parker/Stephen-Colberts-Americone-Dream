@@ -55,6 +55,55 @@ void readDAC(){
   ticks = yeet;
 
   
+
+  int LSB_ANALOG = analogRead(DAC_LSB_PIN);
+  long LSB_MAPPED = map(LSB_ANALOG, 0, 1023, 0, 127);
+  
+  int MSB_ANALOG = analogRead(DAC_MSB_PIN);
+  long MSB_MAPPED = map(MSB_ANALOG, 0, 1023, 0, 63);
+
+  unsigned long remapped = 0;
+
+  remapped |= ((LSB_MAPPED & B00000001)<<0);
+  remapped |= ((LSB_MAPPED & B00000010)<<1);
+  remapped |= ((LSB_MAPPED & B00000100)<<2);
+  remapped |= ((LSB_MAPPED & B00001000)<<3);
+  remapped |= ((LSB_MAPPED & B00010000)<<4);
+  remapped |= ((LSB_MAPPED & B00100000)<<5);
+  remapped |= ((LSB_MAPPED & B01000000)<<6);
+
+  remapped |= ((MSB_MAPPED & B00000001)<<1);
+  remapped |= ((MSB_MAPPED & B00000010)<<2);
+  remapped |= ((MSB_MAPPED & B00000100)<<3);
+  remapped |= ((MSB_MAPPED & B00001000)<<4);
+  remapped |= ((MSB_MAPPED & B00010000)<<5);
+  remapped |= ((MSB_MAPPED & B00100000)<<6);
+
+  
+//  digitalWrite(DAC_LSB_PIN0, value & B0000000000001 );
+//  digitalWrite(DAC_LSB_PIN1, value & B0000000000100 );
+//  digitalWrite(DAC_LSB_PIN2, value & B0000000010000 );
+//  digitalWrite(DAC_LSB_PIN3, value & B0000001000000 );
+//  digitalWrite(DAC_LSB_PIN4, value & B0000100000000 );
+//  digitalWrite(DAC_LSB_PIN5, value & B0010000000000 );
+//  digitalWrite(DAC_LSB_PIN6, value & B1000000000000 );
+//  
+//  digitalWrite(DAC_LSB_PIN7, value & B0000000000010 );  
+//  digitalWrite(DAC_MSB_PIN0, value & B0000000001000 );
+//  digitalWrite(DAC_MSB_PIN1, value & B0000000100000 );
+//  digitalWrite(DAC_MSB_PIN2, value & B0000010000000 );
+//  digitalWrite(DAC_MSB_PIN3, value & B0001000000000 );
+//  digitalWrite(DAC_MSB_PIN4, value & B0100000000000 );
+////  digitalWrite(DAC_MSB_PIN5, value& B0000000000000 );
+////  digitalWrite(DAC_MSB_PIN6, value& B0000000000000 );
+////  digitalWrite(DAC_MSB_PIN7, value& B0000000000000 );  
+  
+  
+//  long yeet = map(x1+x2,0,6655,0,6399);
+//  long yeet = map(x1+x2,0,6505,0,6399);
+  ticks = remapped;
+
+  
 //  Serial.print("LSB: ");
 //  Serial.print(x1);
 //  Serial.print(" MSB: ");
