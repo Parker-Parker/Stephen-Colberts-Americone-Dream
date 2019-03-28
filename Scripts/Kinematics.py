@@ -1,3 +1,155 @@
+import math
+import serial
+import time
+from serial.tools.list_ports import comports
+
+class KinematicsException(Exception):
+    pass
+class UpperLinkForwardError(Exception):
+    pass
+class UpperLinkInverseError(Exception):
+    pass
+class LowerLinkInverseError(Exception):
+    pass
+
+
+class Comms:
+
+    def __init__(self):
+        self.serialPort = serial.Serial()
+        self.availableDevices = []
+        self.availableDeviceDescriptions = []
+        self.availablePorts = []
+        for i in comports():
+            self.availablePorts.append(i)
+            self.availableDevices.append(i.device)
+            self.availableDeviceDescriptions.append(i.description)
+        # [self.serialPort.setPort(i.device) for i in self.availablePorts if i.description == "1234567876543234567"]
+        # [self.serialPort.setPort(i.device) for i in self.availablePorts if i.device == "COM12" or i.device == "COM14"]
+        yeet = []
+        for i in self.availablePorts:
+            if i.device == "COM12" or i.device == "COM14" or i.device == "COM16":
+                # self.serialPort.setPort(i.device)
+                print(i)
+                self.serialPort = serial.Serial(i.device)
+        # self.robot = Robot
+
+    def registerRobot(self, robot):
+        print("regstart")
+        self.robot = robot
+        self.robot.comms = self
+        # self.serialPort.open()
+        # self.serialPort.write(b'123')
+        time.sleep(1)
+        self.serialPort.flushInput()
+        time.sleep(1)
+        # self.serialPort.write("-000-000+000+000+007".encode("ASCII", "ignore"))
+        # self.serialPort.write("-000-000+000+000+008".encode("ASCII", "ignore"))
+        # self.serialPort.write("-000-000+000+000+009".encode("ASCII", "ignore"))
+        # self.serialPort.write("-000-000+000+000+009".encode("ASCII", "ignore"))
+        # # print("regwait1")
+        # # self.serialPort.read(60)
+        # # n = 0
+        #
+        # print("regwait2")
+        # while not n == ';':
+        #     try:
+        #         x = self.serialPort.read(1)
+        #         n = x.decode("ASCII")
+        #     except:
+        #         pass
+        # self.serialPort.read(1)
+        print("regend")
+
+    def parseLine(self):
+        if self.serialPort.is_open:
+            # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+            v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
+            v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
+            v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
+            v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
+            v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+
+            self.serialPort.write((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+            # print((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+
+
+            if self.serialPort.in_waiting < 40:
+                # print("waiting for message: "+str(self.serialPort.in_waiting))
+                pass
+            else:
+                # jointAngles = self.serialPort.read(20)
+                # nubValues = self.serialPort.read(20)
+
+                message = self.serialPort.read(40)
+                # print(message)
+
+                joints = [0]*5
+                for i in range(5):
+                    joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+
+                nub = [0]*5
+                for i in range(5):
+                    nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+                    if message[i * 4 - 20]==0 :
+                        nub[i] = nub[i]
+                    else:
+                        nub[i] = -nub[i]
+
+                # print(joints)
+                # print(nub)
+
+                self.robot.joints = joints
+                self.robot.nub = nub
+
+    def parseLineTest(self,yeet):
+        # if self.serialPort.is_open():
+        #     if self.serialPort.in_waiting < 40:
+        #         # print("waiting for message: "+str(self.serialPort.in_waiting))
+        #         pass
+        #     else:
+                # jointAngles = self.serialPort.read(20)
+                # nubValues = self.serialPort.read(20)
+
+                # message = self.serialPort.read(40)
+        message = yeet[0:40]
+
+        joints = [0, 0, 0, 0, 0]
+        for i in range(5):
+            joints[i] = int("1234")#message[i*4:i*4+4].decode("ASCII"))
+            # joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+
+        nub = [0, 0, 0, 0, 0]
+        for i in range(5):
+                    nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+                    if message[i * 4 - 20]==0 :
+                        nub[i] = nub[i]
+                    else:
+                        nub[i] = -nub[i]
+
+        print(joints)
+        print(nub)
+
+    def printPortDebug(self):
+        self.serialPort = serial.Serial()
+        self.availablePorts = comports()
+
+        for i in self.availablePorts:
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print("Prod: "+str(i.product))
+            print("Dev: "+str(i.device))
+            print("Desc: "+str(i.description))
+            print("Name: "+str(i.name))
+            print("Location: "+str(i.location))
+            print("Int: "+str(i.interface))
+            print("Man: "+str(i.manufacturer))
+            print("Prod: "+str(i.product))
+        # self.availablePortNames = [i.name for i in self.availablePorts]
+        # self.availablePortLocations = [i.location for i in self.availablePorts]
+        # self.availablePortDescs = [i.description for i in self.availablePorts]
+        # self.availablePortDevs = [i.device for i in self.availablePorts]
+        # self.availablePortProds = [i.product for i in self.availablePorts]
+
 class Robot:
     __TL = 13.
     __BL = 14.
@@ -9,6 +161,7 @@ class Robot:
     __HL = 2.
     __L0 = 4.
     __L1 = 4.
+
 
     def __init__(self):
         self.nub = [0]*5
@@ -55,9 +208,11 @@ class Robot:
         P = math.sqrt(PPY ** 2 + PPX ** 2)
         Q = math.sqrt((PPY - PQY) ** 2 + (PPX - PQX) ** 2)
 
-        ALPHA = math.acos((Q ** 2 + self.__TL ** 2 - P ** 2) / (2 * Q * self.__TL))
-        BETA = math.acos((Q ** 2 + self.__FL ** 2 - self.__BL ** 2) / (2 * Q * self.__FL))
-
+        try:
+            ALPHA = math.acos((Q ** 2 + self.__TL ** 2 - P ** 2) / (2 * Q * self.__TL))
+            BETA = math.acos((Q ** 2 + self.__FL ** 2 - self.__BL ** 2) / (2 * Q * self.__FL))
+        except:
+            raise UpperLinkForwardError("Upper links in an unsolvable config(Check TH3 and TH4)")
         THK = ALPHA + BETA - math.pi / 2
 
 
@@ -82,8 +237,11 @@ class Robot:
         return X, Y, Z, THX, THY, THZ
 
     def invKin(self,X, Y, Z, THX, THY, THZ):
-
-        TH3 = math.asin((self.__T - Z - self.__HH * math.cos(-THY) + self.__HL * math.sin(-THY)) / (-self.__TL))
+        try:
+            TH3 = math.asin((self.__T - Z - self.__HH * math.cos(-THY) + self.__HL * math.sin(-THY)) / (-self.__TL))
+        except:
+            raise UpperLinkInverseError("could not solve for TH3 (Check Z and THY):")
+        try:
         THK = - THY - TH3
         dt = self.__TL * math.cos(TH3) + self.__HH * math.sin(-THY) + self.__HL * math.cos(-THY)
         P2X = X - dt * math.cos(THZ)
