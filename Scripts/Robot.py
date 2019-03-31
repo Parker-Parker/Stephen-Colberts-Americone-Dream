@@ -205,16 +205,33 @@ class Comms:
 
 
 class Robot:
-    __TL = 13.
-    __BL = 14.
-    __GL = 2.5
-    __FL = 2.
-    __LL = 4.
-    __T = 21.
-    __HH = 1.
-    __HL = 2.
-    __L0 = 4.
-    __L1 = 4.
+    # ####################################
+    # ### OG
+    # ####################################
+    # __TL = 13.
+    # __BL = 14.
+    # __GL = 2.5
+    # __FL = 2.
+    # __LL = 4.
+    # __T = 21.
+    # __HH = 1.
+    # __HL = 2.
+    # __L0 = 4.
+    # __L1 = 4.
+
+    ####################################
+    ### 3-30-2019
+    ####################################
+    __TL = 11.25
+    __BL = 12.375
+    __GL = 2.48
+    __FL = 2.5
+    __LL = 3.375
+    __T = 22.   #?
+    __HH = 1.   #?
+    __HL = 2.   #?
+    __L0 = 4.   #?
+    __L1 = 4.   #?
 
     def __init__(self):
         self.nub = [0]*5
@@ -780,11 +797,12 @@ class Robot:
         # print("Returning to last good position")
         #
         # self.jointTargets = self.
-        home = [75, 150, 0, 0, 0]
+        home = [85, 150, 0, 0, 0]
         print("moving a bit towards home")
         # self.jointTargets = self.lastgood
         calibrated = [(9*a_i+ b_i)/10 for a_i, b_i in zip(self.lastgood,home)]
     #     MAKE THIS CLOSED ROTATION AVERAGE
+    #     THIS WILL BREAK THINGS AT SEAMS OF PLANAR MOTION IN ITS CURRENT STATE
         self.jointTargets = calibrated.copy()
 
 
@@ -803,9 +821,11 @@ class Robot:
         # gainT = 0.000000000
         # gainF = 0.0000016  # .0001 # 0002
         # gainF = 0.0000021  # .0001 # 0002
-        gainF = 0.0000041  # .0001 # 0002
+        gainF = 0.0000041  # .0001 # 0002 #BEST SO FAR
         # gainF = 0.0000081  # .0001 # 0002
+        # gainF = 0.0000061  # .0001 # 0002
         gainT = 0.00000000000  # 100
+
 
         dZ = gainF * force
         dP = gainT * torque
@@ -813,11 +833,16 @@ class Robot:
         if abs(dZ) > .15:
             dz = .15 * abs(dZ) / dZ
 
+        # if abs(dZ) > .25:
+        #     dz = .25 * abs(dZ) / dZ
+
         print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("DZ DP: "+ str((dZ,dP)))
         print("F T: "+ str((force, torque)))
         print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints)+ "    Joints targ: " + str(self.jointTargets))
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        """nub = [y1, z1, x, y2, z2]"""
 
         try:
 
