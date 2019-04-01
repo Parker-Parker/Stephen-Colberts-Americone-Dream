@@ -193,7 +193,7 @@ void setup() {
   pinMode(ENC2_PIN, INPUT);
 
  // Serial.begin(9600);
-  
+
   pinMode(DAC_LSB_PIN0, OUTPUT);
   pinMode(DAC_LSB_PIN1, OUTPUT);
   pinMode(DAC_LSB_PIN2, OUTPUT);
@@ -202,7 +202,7 @@ void setup() {
   pinMode(DAC_LSB_PIN5, OUTPUT);
   pinMode(DAC_LSB_PIN6, OUTPUT);
   pinMode(DAC_LSB_PIN7, OUTPUT);
-  
+
   pinMode(DAC_MSB_PIN0, OUTPUT);
   pinMode(DAC_MSB_PIN1, OUTPUT);
   pinMode(DAC_MSB_PIN2, OUTPUT);
@@ -212,7 +212,7 @@ void setup() {
 //  pinMode(DAC_MSB_PIN6, OUTPUT);
 //  pinMode(DAC_MSB_PIN7, OUTPUT);
 
-  
+
   enc1 = digitalRead(ENC_PIN);
   enc2 = digitalRead(ENC2_PIN);
 //  // Test setup
@@ -221,10 +221,10 @@ void setup() {
 //
 //  bool enc1 = digitalRead(ENC_PIN);
 //  bool enc2 = digitalRead(ENC2_PIN);
-  
+
   attachInterrupt(digitalPinToInterrupt(ENC2_PIN), encISR2, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN), encISR, CHANGE);
-//  
+//
 //  Wire.begin(SLAVE_ADDRESS);
 //  Wire.onRequest(requestEvent);
 //  Wire.onReceive(receiveEvent);
@@ -241,8 +241,8 @@ long duty;
 void loop() {
   writeDAC(ticks);
 //  writeDAC(6400);
-  
-  
+
+
 //  Serial.print("Ticks: ");
 //  Serial.println(ticks);
 //  Serial.print("Current: ");
@@ -264,6 +264,5 @@ void loop() {
 //  Serial.print("    Dir: ");
 //  Serial.println(digitalRead(DIR_PIN));
   delay(1);
-    
-}
 
+}
