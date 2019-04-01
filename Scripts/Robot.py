@@ -1227,7 +1227,7 @@ class Robot:
         # print("Returning to last good position")
         #
         # self.jointTargets = self.
-        home = [85, 150, 0, 0, 0]
+        home = [85, 150, 180, 180, 180]
         print("moving a bit towards home")
         # self.jointTargets = self.lastgood
         calibrated = [ self.rotationalAverage(a_i,b_i,9,1) for a_i, b_i in zip(self.lastgood,home)]
@@ -1250,7 +1250,8 @@ class Robot:
                   calNub[0] - calNub[3]]
                 # [X, Y, Z, THX, THY, THZ]
 
-        gains = [0.0000041, 0.0000041, 0.0000041, 0, 0, 0]
+        # gains = [0.0000041, 0.0000041, 0.0000041, 0, 0, 0]
+        gains = [0, 0, 0, 0, 0, 0]
 
         deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
 
@@ -1265,7 +1266,7 @@ class Robot:
         print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         # print("DZ DP: "+ str((dZ,dP)))
         # print("F T: "+ str((force, torque)))
-        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(self.jointTargets))
+        print("nub: " + str(self.nub) + " deltas: " + str(deltas) + "  Joints deg: " + str(self.joints) + "  Joints targ: " + str(self.jointTargets))
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         """nub = [y1, z1, x, y2, z2]"""
@@ -1320,7 +1321,7 @@ class Robot:
             # jointTargs[2] = 0
             # jointTargs[3] = 0
             # jointTargs[4] = 0
-            jointTargs = [-a_i + b_i for a_i, b_i in zip(jointTargs, jointOffsets)]
+            jointTargs = [((-a_i + b_i)+720)%360 for a_i, b_i in zip(jointTargs, jointOffsets)]
 
             self.jointTargets = jointTargs.copy()
             # print("Joint Target Groomed: "+str(jointTargs))
