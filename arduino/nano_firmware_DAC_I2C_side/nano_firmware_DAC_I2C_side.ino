@@ -30,7 +30,7 @@ byte sentPosition[SENT_SIZE];
 
 volatile int setPoint = 0;
 volatile int currPosition = 0;
-long GAIN = 20;
+long GAIN = 7;
 
 volatile bool enc1 = true;
 volatile bool enc2 = true;
@@ -45,77 +45,45 @@ void readDAC(){
 
 
   int x1x1 = analogRead(DAC_LSB_PIN);
-  long x1 = map(x1x1, 0, 1023, 0, 127);
-  
+  long x1 = (x1x1 & 1016)>>3;
+  //long x1 = map(x1x1, 0, 1023, 0, 127);
+
   int x2x2 = analogRead(DAC_MSB_PIN);
-  long x2 = map(x2x2, 0, 1023, 0, 63)<<7;
-  
+  long x2 = x2x2 & (1008);
+
+  Serial.print("LSB Read: ");
+  Serial.print(x1x1);
+  Serial.print(" x1: ");
+  Serial.print(x1);
+  Serial.print(" MSB Read: ");
+  Serial.print(x2x2);
+  Serial.print(" x2: ");
+  Serial.print(x2);
+
+  x2 = x2<<3;
+
+  Serial.print(" ");
+ // x2 = map(x2x2, 0, 1023, 0, 255)<<5;
+
   long yeet = map(x1+x2,0,6655,0,6399);
 //  long yeet = map(x1+x2,0,6505,0,6399);
   ticks = yeet;
 
-  
 
-  int LSB_ANALOG = analogRead(DAC_LSB_PIN);
-  long LSB_MAPPED = map(LSB_ANALOG, 0, 1023, 0, 127);
-  
-  int MSB_ANALOG = analogRead(DAC_MSB_PIN);
-  long MSB_MAPPED = map(MSB_ANALOG, 0, 1023, 0, 63);
-
-  unsigned long remapped = 0;
-
-  remapped |= ((LSB_MAPPED & B00000001)<<0);
-  remapped |= ((LSB_MAPPED & B00000010)<<1);
-  remapped |= ((LSB_MAPPED & B00000100)<<2);
-  remapped |= ((LSB_MAPPED & B00001000)<<3);
-  remapped |= ((LSB_MAPPED & B00010000)<<4);
-  remapped |= ((LSB_MAPPED & B00100000)<<5);
-  remapped |= ((LSB_MAPPED & B01000000)<<6);
-
-  remapped |= ((MSB_MAPPED & B00000001)<<1);
-  remapped |= ((MSB_MAPPED & B00000010)<<2);
-  remapped |= ((MSB_MAPPED & B00000100)<<3);
-  remapped |= ((MSB_MAPPED & B00001000)<<4);
-  remapped |= ((MSB_MAPPED & B00010000)<<5);
-  remapped |= ((MSB_MAPPED & B00100000)<<6);
-
-  
-//  digitalWrite(DAC_LSB_PIN0, value & B0000000000001 );
-//  digitalWrite(DAC_LSB_PIN1, value & B0000000000100 );
-//  digitalWrite(DAC_LSB_PIN2, value & B0000000010000 );
-//  digitalWrite(DAC_LSB_PIN3, value & B0000001000000 );
-//  digitalWrite(DAC_LSB_PIN4, value & B0000100000000 );
-//  digitalWrite(DAC_LSB_PIN5, value & B0010000000000 );
-//  digitalWrite(DAC_LSB_PIN6, value & B1000000000000 );
-//  
-//  digitalWrite(DAC_LSB_PIN7, value & B0000000000010 );  
-//  digitalWrite(DAC_MSB_PIN0, value & B0000000001000 );
-//  digitalWrite(DAC_MSB_PIN1, value & B0000000100000 );
-//  digitalWrite(DAC_MSB_PIN2, value & B0000010000000 );
-//  digitalWrite(DAC_MSB_PIN3, value & B0001000000000 );
-//  digitalWrite(DAC_MSB_PIN4, value & B0100000000000 );
-////  digitalWrite(DAC_MSB_PIN5, value& B0000000000000 );
-////  digitalWrite(DAC_MSB_PIN6, value& B0000000000000 );
-////  digitalWrite(DAC_MSB_PIN7, value& B0000000000000 );  
-  
-  
-//  long yeet = map(x1+x2,0,6655,0,6399);
-//  long yeet = map(x1+x2,0,6505,0,6399);
-  ticks = remapped;
-
-  
 //  Serial.print("LSB: ");
 //  Serial.print(x1);
 //  Serial.print(" MSB: ");
 //  Serial.print(x2);
 
-  
-  Serial.print(" AL: ");
-  Serial.print(x1x1);
-  Serial.print(" AM: ");
-  Serial.print(x2x2);
-  
-  
+
+//  Serial.print(" AL: ");
+//  Serial.print(x1x1);
+//  Serial.print(" AM: ");
+//  Serial.print(x2x2);
+//  Serial.print("X2: ");
+//  Serial.print(x2);
+
+
 }
 
 /////////////////////////////////////
@@ -176,19 +144,19 @@ void readDAC(){
 
 
 void setup() {
-  
+
   Wire.begin(SLAVE_ADDRESS);
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
   pinMode(PWM_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
-  
+
 //  pinMode(12, OUTPUT);
 //  digitalWrite(12, HIGH);
-  
+
   pinMode(DAC_LSB_PIN, INPUT);
   pinMode(DAC_MSB_PIN, INPUT);
-  
+
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
   setPoint = 0;
   Serial.begin(9600);
@@ -215,14 +183,14 @@ void loop() {
 //  }
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
-  
+
   currPosition = (ticks*360)/ENC_TICKS;
 //
-////  
+////
 //////  //start average code
 //////  reportedPos = (ticks*360)/ENC_TICKS;
-//////  
-//////  int p = currPosition - reportedPos;  
+//////
+//////  int p = currPosition - reportedPos;
 //////  while(p<0){
 //////    p+=(360);
 //////  }
@@ -230,36 +198,36 @@ void loop() {
 //////
 //////  if(p>180){
 //////    if(currPosition>reportedPos){
-//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;  
+//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;
 //////    }
 //////    else {
 //////      currPosition = (currPosition*4 +reportedPos)/5;
 //////    }
 //////  }
-//////  
+//////
 //////  if(p<180){
 //////    if(currPosition>reportedPos){
 //////      currPosition = (currPosition*4 +reportedPos)/5;
 //////    }
-//////    else {    
-//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;  
+//////    else {
+//////      currPosition = ((currPosition*4 +reportedPos)/5+180)%360;
 //////      }
 //////  }
 //////  //end average code
 ////
 //
-  
+
   int error = (setPoint - currPosition);
   if (error>180){
-    duty = (GAIN*(error-360))/180;
+    duty = (GAIN*(error-360));
   }
   else if (error<-180){
-    duty = (GAIN*(error+360))/180;
+    duty = (GAIN*(error+360));
   }
   else{
-    duty = (GAIN*(error))/180;
+    duty = (GAIN*(error));
   }
-  
+
   if(duty < 0){
     duty = duty*-1;
     digitalWrite(DIR_PIN, HIGH);
@@ -271,13 +239,13 @@ void loop() {
     duty = 70;
   }
 
-  
+
   analogWrite(PWM_PIN, duty);
 
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
 
-//  
+//
   Serial.print("    TIC: ");
   Serial.print(ticks);
   Serial.print("    Current: ");
@@ -308,7 +276,7 @@ void loop() {
 //  digitalWrite(9, LOW);
 //  digitalWrite(8, HIGH);
 //  digitalWrite(9, HIGH);
-//  
+//
 //  }else{
 //  digitalWrite(8, LOW);
 //  digitalWrite(9, HIGH);
@@ -318,7 +286,7 @@ void loop() {
 //  asdf++;
 //  asdf = asdf>40 ? 0 : asdf;
 //
-//  
+//
 //  Serial.print("Deg:  ");
 //  Serial.println(currPosition);
 //  Serial.print("Tic:  ");
@@ -329,7 +297,7 @@ void loop() {
 
 }
 /*
- * 
+ *
  */
 void requestEvent(){
   get_byte_position();
@@ -348,23 +316,24 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
-  setPoint = recievedSetPoint[1]<<8 + recievedSetPoint[0];
+  setPoint = (recievedSetPoint[1]<<8) + recievedSetPoint[0];
   Serial.println(setPoint);
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
 }
 
 void get_byte_position(){
-  sentPosition[0] = (currPosition & 255); 
+  sentPosition[0] = (currPosition & 255);
   sentPosition[1] = (currPosition & (255<<8))>>8; // lol clever
 }
 
 
 
-void serialEvent() {    
-    int yeet = Serial.parseInt()+720;
-    if(yeet>=0){
-      setPoint = ((yeet%360));
-    }
+void serialEvent() {
+//    int yeet = Serial.parseInt()+720;
+//    if(yeet>=0){
+//      setPoint = ((yeet%360));
+//    }
 }
+
 
