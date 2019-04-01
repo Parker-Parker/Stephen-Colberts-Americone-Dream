@@ -2,19 +2,16 @@
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
 //#define SLAVE_ADDRESS     0x23  //base motor furthest
-#define SLAVE_ADDRESS     0x24  //base motor elbow
-//#define SLAVE_ADDRESS     0x25  //base motor stationary
+//#define SLAVE_ADDRESS     0x24  //base motor elbow
+#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         4
 #define PWM_PIN           5
 #define DIR_PIN           6
 #define POT_PIN           A1
-////////////  0x24  //////////
 #define ENC_PIN           3
 #define ENC2_PIN          2
-
-////////////  0x23  //////////
 //#define ENC_PIN           2
 //#define ENC2_PIN          3
 #define ENC_TICKS         6400
@@ -96,7 +93,7 @@ void setup() {
   pinMode(ENC_PIN, INPUT);
   pinMode(ENC2_PIN, INPUT);
 
-  
+
   enc1 = digitalRead(ENC_PIN);
   enc2 = digitalRead(ENC2_PIN);
 //  // Test setup
@@ -105,10 +102,10 @@ void setup() {
 
   bool enc1 = digitalRead(ENC_PIN);
   bool enc2 = digitalRead(ENC2_PIN);
-  
+
   attachInterrupt(digitalPinToInterrupt(ENC2_PIN), encISR2, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN), encISR, CHANGE);
-  
+
   Wire.begin(SLAVE_ADDRESS);
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
@@ -140,7 +137,7 @@ void loop() {
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
   currPosition = (ticks*360)/ENC_TICKS;
-  
+
   int error = (setPoint - currPosition);
   if (error>180){
     duty = (GAIN*(error-360))/180;
@@ -151,7 +148,7 @@ void loop() {
   else{
     duty = (GAIN*(error))/180;
   }
-  
+
   if(duty < 0){
     duty = duty*-1;
     digitalWrite(DIR_PIN, HIGH);
@@ -163,31 +160,31 @@ void loop() {
     duty = 70;
   }
 
-  
+
   analogWrite(PWM_PIN, duty);
 
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
 
-  
-  Serial.print("Current: ");
-  Serial.print(currPosition);
-  Serial.print("    Set: ");
-  Serial.print(setPoint);
-  Serial.print("    Diff: ");
-  Serial.print(setPoint - currPosition);
-  Serial.print("    Duty: ");
-  Serial.print(duty);
-  Serial.print("    Gain: ");
-  Serial.print(GAIN);
-  Serial.print("    GD: ");
-  Serial.print(GAIN*(setPoint - currPosition));
-  Serial.print("    GDD: ");
-  Serial.print((GAIN*(setPoint - currPosition))/360);
-  Serial.print("    GDD: ");
-  Serial.print(GAIN*(setPoint - currPosition)/360);
-  Serial.print("    Dir: ");
-  Serial.println(digitalRead(DIR_PIN));
+
+//  Serial.print("Current: ");
+//  Serial.print(currPosition);
+//  Serial.print("    Set: ");
+//  Serial.print(setPoint);
+//  Serial.print("    Diff: ");
+//  Serial.print(setPoint - currPosition);
+//  Serial.print("    Duty: ");
+//  Serial.print(duty);
+//  Serial.print("    Gain: ");
+//  Serial.print(GAIN);
+//  Serial.print("    GD: ");
+//  Serial.print(GAIN*(setPoint - currPosition));
+//  Serial.print("    GDD: ");
+//  Serial.print((GAIN*(setPoint - currPosition))/360);
+//  Serial.print("    GDD: ");
+//  Serial.print(GAIN*(setPoint - currPosition)/360);
+//  Serial.print("    Dir: ");
+//  Serial.println(digitalRead(DIR_PIN));
 
 /////////////////////////////////////
 // test code
@@ -198,7 +195,7 @@ void loop() {
 //  digitalWrite(9, LOW);
 //  digitalWrite(8, HIGH);
 //  digitalWrite(9, HIGH);
-//  
+//
 //  }else{
 //  digitalWrite(8, LOW);
 //  digitalWrite(9, HIGH);
@@ -208,7 +205,7 @@ void loop() {
 //  asdf++;
 //  asdf = asdf>40 ? 0 : asdf;
 //
-//  
+//
 //  Serial.print("Deg:  ");
 //  Serial.println(currPosition);
 //  Serial.print("Tic:  ");
@@ -219,7 +216,7 @@ void loop() {
 
 }
 /*
- * 
+ *
  */
 void requestEvent(){
   get_byte_position();
@@ -238,8 +235,9 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
-  setPoint = recievedSetPoint[1]<<8 + recievedSetPoint[0];
+  setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
   Serial.println(setPoint);
+
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
 }
