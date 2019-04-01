@@ -243,16 +243,15 @@ void receiveEvent(int bytesReceived){
 }
 
 void get_byte_position(){
-  sentPosition[0] = (currPosition & 255); 
+  sentPosition[0] = (currPosition & 255);
   sentPosition[1] = (currPosition & (255<<8))>>8; // lol clever
 }
 
 
 
-void serialEvent() {    
+void serialEvent() {
     int yeet = Serial.parseInt()+720;
     if(yeet>=0){
       setPoint = ((yeet%360));
     }
 }
-
