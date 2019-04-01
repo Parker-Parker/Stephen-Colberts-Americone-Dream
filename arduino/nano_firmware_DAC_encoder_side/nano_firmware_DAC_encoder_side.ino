@@ -1,4 +1,3 @@
-
 //#define PWM_PIN           5
 //#define DIR_PIN           6
 //#define POT_PIN           A1
@@ -10,26 +9,26 @@
 
 
 
-//#define DAC_LSB_PIN0   13 
-//#define DAC_LSB_PIN1   12 
-//#define DAC_LSB_PIN2   11 
-//#define DAC_LSB_PIN3   10 
-//#define DAC_LSB_PIN4   9 
-//#define DAC_LSB_PIN5   8 
-//#define DAC_LSB_PIN6   7 
-//#define DAC_LSB_PIN7   6 
+//#define DAC_LSB_PIN0   13
+//#define DAC_LSB_PIN1   12
+//#define DAC_LSB_PIN2   11
+//#define DAC_LSB_PIN3   10
+//#define DAC_LSB_PIN4   9
+//#define DAC_LSB_PIN5   8
+//#define DAC_LSB_PIN6   7
+//#define DAC_LSB_PIN7   6
 //
-//#define DAC_MSB_PIN0   5 
+//#define DAC_MSB_PIN0   5
 //#define DAC_MSB_PIN1   4
 //#define DAC_MSB_PIN2   A3
-//#define DAC_MSB_PIN3   A2 
-//#define DAC_MSB_PIN4   A1 
-////#define DAC_MSB_PIN5   0 
+//#define DAC_MSB_PIN3   A2
+//#define DAC_MSB_PIN4   A1
+////#define DAC_MSB_PIN5   0
 ////#define DAC_MSB_PIN6   0
 ////#define DAC_MSB_PIN7   0
 
 
-#define DAC_LSB_PIN0    7 
+#define DAC_LSB_PIN0    7
 #define DAC_LSB_PIN1    6
 #define DAC_LSB_PIN2    5
 #define DAC_LSB_PIN3    4
@@ -38,32 +37,32 @@
 #define DAC_LSB_PIN6    A1
 
 
-#define DAC_LSB_PIN7   13 
+#define DAC_LSB_PIN7   13
 #define DAC_MSB_PIN0   12
 #define DAC_MSB_PIN1   11
 #define DAC_MSB_PIN2   10
-#define DAC_MSB_PIN3   9 
-#define DAC_MSB_PIN4   8 
-//#define DAC_MSB_PIN5   0 
+#define DAC_MSB_PIN3   9
+#define DAC_MSB_PIN4   8
+//#define DAC_MSB_PIN5   0
 //#define DAC_MSB_PIN6   0
 //#define DAC_MSB_PIN7   0
 
-//#define DAC_LSB_PIN0   A1 
-//#define DAC_LSB_PIN1   A2 
-//#define DAC_LSB_PIN2   A3 
-//#define DAC_LSB_PIN3   4 
-//#define DAC_LSB_PIN4   5 
-//#define DAC_LSB_PIN5   6 
-//#define DAC_LSB_PIN6   7 
+//#define DAC_LSB_PIN0   A1
+//#define DAC_LSB_PIN1   A2
+//#define DAC_LSB_PIN2   A3
+//#define DAC_LSB_PIN3   4
+//#define DAC_LSB_PIN4   5
+//#define DAC_LSB_PIN5   6
+//#define DAC_LSB_PIN6   7
 //
 //
-//#define DAC_LSB_PIN7   8 
-//#define DAC_MSB_PIN0   9 
+//#define DAC_LSB_PIN7   8
+//#define DAC_MSB_PIN0   9
 //#define DAC_MSB_PIN1   10
 //#define DAC_MSB_PIN2   11
-//#define DAC_MSB_PIN3   12 
-//#define DAC_MSB_PIN4   13 
-////#define DAC_MSB_PIN5   0 
+//#define DAC_MSB_PIN3   12
+//#define DAC_MSB_PIN4   13
+////#define DAC_MSB_PIN5   0
 ////#define DAC_MSB_PIN6   0
 ////#define DAC_MSB_PIN7   0
 
@@ -140,7 +139,7 @@ void encISR2(){
 
 void writeDAC(long value) {
 
-//  
+//
 //  Serial.print("bits: ");
 ////  Serial.print( (value >> 0) & 1 , (value >> 1) & 1 , (value >> 2) & 1 , (value >> 3) & 1 , (value >> 4) & 1 , (value >> 5) % 2,(value >> 6) % 2, (value >> 7) & 1 ,(value >> 8) & 1 , (value >> 9) & 1 , (value >> 10)& 1 , (value >> 11)& 1 , (value >> 12)& 1 , (value >> 13)& 1 , (value >> 14)& 1 , (value >> 15)& 1 )
 //
@@ -154,7 +153,7 @@ void writeDAC(long value) {
 //  Serial.print( (value >> 5) & 1 );
 //  Serial.print( (value >> 6) & 1 );
 //  Serial.print( (value >> 7) & 1 );
-//  
+//
 //  Serial.print( (value >> 8) & 1 );
 //  Serial.print( (value >> 9) & 1 );
 //  Serial.print( (value >> 10)& 1 );
@@ -167,61 +166,24 @@ void writeDAC(long value) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//  
-//  digitalWrite(DAC_LSB_PIN0, (value >> 0) & 1 );
-//  digitalWrite(DAC_LSB_PIN1, (value >> 1) & 1 );
-//  digitalWrite(DAC_LSB_PIN2, (value >> 2) & 1 );
-//  digitalWrite(DAC_LSB_PIN3, (value >> 3) & 1 );
-//  digitalWrite(DAC_LSB_PIN4, (value >> 4) & 1 );
-//  digitalWrite(DAC_LSB_PIN5, (value >> 5) & 1 );
-//  digitalWrite(DAC_LSB_PIN6, (value >> 6) & 1 );
-//  digitalWrite(DAC_LSB_PIN7, (value >> 7) & 1 );
-//  
-//  digitalWrite(DAC_MSB_PIN0, (value >> 8) & 1 );
-//  digitalWrite(DAC_MSB_PIN1, (value >> 9) & 1 );
-//  digitalWrite(DAC_MSB_PIN2, (value >> 10)& 1 );
-//  digitalWrite(DAC_MSB_PIN3, (value >> 11)& 1 );
-//  digitalWrite(DAC_MSB_PIN4, (value >> 12)& 1 );
-////  digitalWrite(DAC_MSB_PIN5, (value >> 13)& 1 );
-////  digitalWrite(DAC_MSB_PIN6, (value >> 14)& 1 );
-////  digitalWrite(DAC_MSB_PIN7, (value >> 15)& 1 );
 
-  
-  digitalWrite(DAC_LSB_PIN0, value & B00000001 );
-  digitalWrite(DAC_LSB_PIN1, value & B00000100 );
-  digitalWrite(DAC_LSB_PIN2, value & B00010000 );
-  digitalWrite(DAC_LSB_PIN3, value & B01000000 );
-  digitalWrite(DAC_LSB_PIN4, value & (B00001000<<5 ));
-  digitalWrite(DAC_LSB_PIN5, value & (B00100000<<5 ));
-  digitalWrite(DAC_LSB_PIN6, value & (B10000000<<5 ));
-  
-  digitalWrite(DAC_LSB_PIN7, value & B00000010 );  
-  digitalWrite(DAC_MSB_PIN0, value & B00001000 );
-  digitalWrite(DAC_MSB_PIN1, value & B00100000 );
-  digitalWrite(DAC_MSB_PIN2, value & B10000000 );
-  digitalWrite(DAC_MSB_PIN3, value & (B00010000<<5) );
-  digitalWrite(DAC_MSB_PIN4, value & (B01000000<<5) );
-//  digitalWrite(DAC_MSB_PIN5, value& B0000000000000 );
-//  digitalWrite(DAC_MSB_PIN6, value& B0000000000000 );
-//  digitalWrite(DAC_MSB_PIN7, value& B0000000000000 );
-  
-//  digitalWrite(DAC_LSB_PIN0, value & B0000000000001 );
-//  digitalWrite(DAC_LSB_PIN1, value & B0000000000100 );
-//  digitalWrite(DAC_LSB_PIN2, value & B0000000010000 );
-//  digitalWrite(DAC_LSB_PIN3, value & B0000001000000 );
-//  digitalWrite(DAC_LSB_PIN4, value & B0000100000000 );
-//  digitalWrite(DAC_LSB_PIN5, value & B0010000000000 );
-//  digitalWrite(DAC_LSB_PIN6, value & B1000000000000 );
-//  
-//  digitalWrite(DAC_LSB_PIN7, value & B0000000000010 );  
-//  digitalWrite(DAC_MSB_PIN0, value & B0000000001000 );
-//  digitalWrite(DAC_MSB_PIN1, value & B0000000100000 );
-//  digitalWrite(DAC_MSB_PIN2, value & B0000010000000 );
-//  digitalWrite(DAC_MSB_PIN3, value & B0001000000000 );
-//  digitalWrite(DAC_MSB_PIN4, value & B0100000000000 );
-////  digitalWrite(DAC_MSB_PIN5, value& B0000000000000 );
-////  digitalWrite(DAC_MSB_PIN6, value& B0000000000000 );
-////  digitalWrite(DAC_MSB_PIN7, value& B0000000000000 );
+  digitalWrite(DAC_LSB_PIN0, (value >> 0) & 1 );
+  digitalWrite(DAC_LSB_PIN1, (value >> 1) & 1 );
+  digitalWrite(DAC_LSB_PIN2, (value >> 2) & 1 );
+  digitalWrite(DAC_LSB_PIN3, (value >> 3) & 1 );
+  digitalWrite(DAC_LSB_PIN4, (value >> 4) & 1 );
+  digitalWrite(DAC_LSB_PIN5, (value >> 5) & 1 );
+  digitalWrite(DAC_LSB_PIN6, (value >> 6) & 1 );
+  digitalWrite(DAC_LSB_PIN7, (value >> 7) & 1 );
+
+  digitalWrite(DAC_MSB_PIN0, (value >> 8) & 1 );
+  digitalWrite(DAC_MSB_PIN1, (value >> 9) & 1 );
+  digitalWrite(DAC_MSB_PIN2, (value >> 10)& 1 );
+  digitalWrite(DAC_MSB_PIN3, (value >> 11)& 1 );
+  digitalWrite(DAC_MSB_PIN4, (value >> 12)& 1 );
+//  digitalWrite(DAC_MSB_PIN5, (value >> 13)& 1 );
+//  digitalWrite(DAC_MSB_PIN6, (value >> 14)& 1 );
+//  digitalWrite(DAC_MSB_PIN7, (value >> 15)& 1 );
 
 }
 
@@ -230,7 +192,7 @@ void setup() {
   pinMode(ENC_PIN, INPUT);
   pinMode(ENC2_PIN, INPUT);
 
-  Serial.begin(9600);
+ // Serial.begin(9600);
   
   pinMode(DAC_LSB_PIN0, OUTPUT);
   pinMode(DAC_LSB_PIN1, OUTPUT);
