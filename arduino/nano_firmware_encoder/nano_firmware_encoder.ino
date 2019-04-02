@@ -1,9 +1,9 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-//#define SLAVE_ADDRESS     0x23  //base motor furthest
+#define SLAVE_ADDRESS     0x23  //base motor furthest
 //#define SLAVE_ADDRESS     0x24  //base motor elbow
-#define SLAVE_ADDRESS     0x25  //base motor stationary
+//#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         4
@@ -31,6 +31,32 @@ volatile bool lastEnc = true;
 volatile bool encDir = true;
 
 volatile long ticks = 0;
+
+
+//// bottom stationary
+//float p = 8.5;
+//float i = 0.0008;
+//float d = 2;
+//int Lower_Bound = 35;
+//int Upper_Bound = 105;
+
+
+// bottom tower
+float p = 11;
+float i = 0.000;
+float d = 0;
+int Lower_Bound = 35;
+int Upper_Bound = 105;
+
+unsigned long prev_time = 0;
+unsigned long curr_time = 0;
+float curr_error = 0.0;
+float prev_error = 0.0;
+float integral_error = 0.0;
+float deriv_error = 0.0;
+unsigned long dt = 1;
+
+
 
 /////////////////////////////////////
 // Method 1
@@ -114,6 +140,8 @@ void setup() {
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
   setPoint = 0;
   Serial.begin(9600);
+  prev_time = millis();
+
 }
 
 
@@ -136,41 +164,96 @@ void loop() {
 //  }
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
+//  currPosition = (ticks*360)/ENC_TICKS;
+//
+//  int error = (setPoint - currPosition);
+//  if (error>180){
+//    duty = (GAIN*(error-360))/180;
+//  }
+//  else if (error<-180){
+//    duty = (GAIN*(error+360))/180;
+//  }
+//  else{
+//    duty = (GAIN*(error))/180;
+//  }
+///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
   currPosition = (ticks*360)/ENC_TICKS;
 
   int error = (setPoint - currPosition);
   if (error>180){
-    duty = (GAIN*(error-360))/180;
+  error = error-360;
   }
   else if (error<-180){
-    duty = (GAIN*(error+360))/180;
+  error = error+360;
   }
   else{
-    duty = (GAIN*(error))/180;
+  error = error;
   }
-
+  
+  curr_error = error;
+  curr_time = millis();
+  dt = (curr_time - prev_time) + 1;
+  integral_error += (dt)*curr_error; //need to prevent overflow
+  if(integral_error > 10000){
+  integral_error = 10000;
+  }
+  
+  if(integral_error < -10000){
+  integral_error = -10000;
+  }
+  
+  deriv_error = (curr_error - prev_error)/(dt);
+  int  duty = (p*curr_error + i*integral_error + d*deriv_error);
+  prev_time = curr_time;
+  
   if(duty < 0){
-    duty = duty*-1;
-    digitalWrite(DIR_PIN, HIGH);
+  duty = duty*-1;
+  digitalWrite(DIR_PIN, HIGH);
   }
   else{
-    digitalWrite(DIR_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  duty = duty;
   }
-  if(duty > 70){
-    duty = 70;
+  
+  if(duty > 130){
+  duty = 130;
   }
-
-
   analogWrite(PWM_PIN, duty);
+///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
+//
+//
+//
+//
+//
+//
+//  if(duty < 0){
+//    duty = duty*-1;
+//    digitalWrite(DIR_PIN, HIGH);
+//  }
+//  else{
+//    digitalWrite(DIR_PIN, LOW);
+//  }
+//  if(duty > 70){
+//    duty = 70;
+//  }
+//
+//
+//  analogWrite(PWM_PIN, duty);
 
   //////////////////////////////////////////////////////
   //////////////////////////////////////////////////////
 
 
-//  Serial.print("Current: ");
-//  Serial.print(currPosition);
-//  Serial.print("    Set: ");
-//  Serial.print(setPoint);
+  Serial.print("Current: ");
+  Serial.print(currPosition);
+  Serial.print("    Set: ");
+  Serial.println(setPoint);
 //  Serial.print("    Diff: ");
 //  Serial.print(setPoint - currPosition);
 //  Serial.print("    Duty: ");
@@ -236,7 +319,7 @@ void receiveEvent(int bytesReceived){
     }
   }
   setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
-  Serial.println(setPoint);
+//  Serial.println(setPoint);
 
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
