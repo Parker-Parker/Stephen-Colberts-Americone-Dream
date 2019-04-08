@@ -14,9 +14,12 @@ breaktime = time.time()
 while(1):
     last = time.time()
     # time.sleep(.1)
-    printme = " 200 200 000 000 000"
+    printme = " 050 150 000 000 000"
     ser.write(printme.encode("ASCII","ignore"))
-    # time.sleep(.1)
+    ser.read(40)
+    time.sleep(.2)
+
+    printme = " 050 150 000 000 000"
 
 
     # print("positive")
@@ -42,7 +45,7 @@ while(1):
     #     print("stopped working at "+ str(breaktime))
     # else:
     #     print("still working at " + str(time.time() - breaktime)+"s at a rate of 0.2s")
-
+    
     print("still working at " + str(time.time() - breaktime)+"s at a rate of titties")
-
+    
     """

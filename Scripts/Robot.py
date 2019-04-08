@@ -81,38 +81,180 @@ class Comms:
             if int(v1)>105:
                 v1 = "105"
                 print("v2 capped at 105")
+            outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
+            self.serialPort.write(outline)
+            print(outline)
 
-            self.serialPort.write((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
-            # print((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
 
 
-            if self.serialPort.in_waiting < 40:
-                # print("waiting for message: "+str(self.serialPort.in_waiting))
-                pass
-            else:
-                # jointAngles = self.serialPort.read(20)
-                # nubValues = self.serialPort.read(20)
+            message = self.serialPort.read(40)
+            # print(message)
 
-                message = self.serialPort.read(40)
-                # print(message)
+            joints = [0]*5
+            for i in range(5):
+                joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
 
-                joints = [0]*5
-                for i in range(5):
-                    joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+            # nub = [0]*5
+            # for i in range(5):
+            #     nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+            #     if message[i * 4 - 20]==0 :
+            #         nub[i] = nub[i]
+            #     else:
+            #         nub[i] = -nub[i]
 
-                nub = [0]*5
-                for i in range(5):
-                    nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
-                    if message[i * 4 - 20]==0 :
-                        nub[i] = nub[i]
-                    else:
-                        nub[i] = -nub[i]
+            # nub = [0]*5
+            # for i in range(5):
+            #     nub[i] = message[(i*4-20):(i*4-16)]
+            #
+            # nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
 
-                # print(joints)
-                # print(nub)
+            nub = [0]*5
+            nub[0] = message[20:24]
+            nub[1] = message[24:28]
+            nub[2] = message[28:32]
+            nub[3] = message[32:36]
+            nub[4] = message[36:40]
+            print(nub[4])
+            nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
 
-                self.robot.joints = joints
-                self.robot.nub = nub
+            # print(joints)
+            # print(nub)
+
+            self.robot.joints = joints
+            self.robot.nub = nub
+
+    # def parseLine(self):
+    #     if self.serialPort.is_open:
+    #         # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+    #
+    #
+    #
+    #         v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
+    #         v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
+    #         v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
+    #         v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
+    #         v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+    #
+    #         if int(v2)>170:
+    #             v2 = "170"
+    #             print("v2 capped at 170")
+    #
+    #         if int(v2)<115:
+    #             v2 = "115"
+    #             print("v2 capped at 115")
+    #
+    #         if int(v1)<35:
+    #             v1 = "035"
+    #             print("v2 capped at 035")
+    #         if int(v1)>105:
+    #             v1 = "105"
+    #             print("v2 capped at 105")
+    #         outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
+    #         self.serialPort.write(outline)
+    #         print(outline)
+    #
+    #
+    #         if self.serialPort.in_waiting < 40:
+    #             # print("waiting for message: "+str(self.serialPort.in_waiting))
+    #             pass
+    #         else:
+    #             # jointAngles = self.serialPort.read(20)
+    #             # nubValues = self.serialPort.read(20)
+    #
+    #             message = self.serialPort.read(40)
+    #             # print(message)
+    #
+    #             joints = [0]*5
+    #             for i in range(5):
+    #                 joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+    #
+    #             # nub = [0]*5
+    #             # for i in range(5):
+    #             #     nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+    #             #     if message[i * 4 - 20]==0 :
+    #             #         nub[i] = nub[i]
+    #             #     else:
+    #             #         nub[i] = -nub[i]
+    #
+    #             # nub = [0]*5
+    #             # for i in range(5):
+    #             #     nub[i] = message[(i*4-20):(i*4-16)]
+    #             #
+    #             # nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
+    #
+    #             nub = [0]*5
+    #             nub[0] = message[20:24]
+    #             nub[1] = message[24:28]
+    #             nub[2] = message[28:32]
+    #             nub[3] = message[32:36]
+    #             nub[4] = message[36:40]
+    #             print(nub[4])
+    #             nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
+    #
+    #             # print(joints)
+    #             # print(nub)
+    #
+    #             self.robot.joints = joints
+    #             self.robot.nub = nub
+
+    # def parseLine(self):
+    #     if self.serialPort.is_open:
+    #         # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+    #
+    #
+    #
+    #         v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
+    #         v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
+    #         v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
+    #         v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
+    #         v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+    #
+    #         if int(v2)>170:
+    #             v2 = "170"
+    #             print("v2 capped at 170")
+    #
+    #         if int(v2)<115:
+    #             v2 = "115"
+    #             print("v2 capped at 115")
+    #
+    #         if int(v1)<35:
+    #             v1 = "035"
+    #             print("v2 capped at 035")
+    #         if int(v1)>105:
+    #             v1 = "105"
+    #             print("v2 capped at 105")
+    #         outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
+    #         self.serialPort.write(outline)
+    #         print(outline)
+    #
+    #
+    #         if self.serialPort.in_waiting < 40:
+    #             # print("waiting for message: "+str(self.serialPort.in_waiting))
+    #             pass
+    #         else:
+    #             # jointAngles = self.serialPort.read(20)
+    #             # nubValues = self.serialPort.read(20)
+    #
+    #             message = self.serialPort.read(40)
+    #             # print(message)
+    #
+    #             joints = [0]*5
+    #             for i in range(5):
+    #                 joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+    #
+    #             nub = [0]*5
+    #             for i in range(5):
+    #                 nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+    #                 if message[i * 4 - 20]==0 :
+    #                     nub[i] = nub[i]
+    #                 else:
+    #                     nub[i] = -nub[i]
+    #
+    #             # print(joints)
+    #             # print(nub)
+    #
+    #             self.robot.joints = joints
+    #             self.robot.nub = nub
 
     def getStatus(self):
         if self.serialPort.is_open:
@@ -227,7 +369,7 @@ class Robot:
     __GL = 2.48
     __FL = 2.5
     __LL = 3.375
-    __T = 22.   #?
+    __T  = 22.  #?
     __HH = 1.   #?
     __HL = 2.   #?
     __L0 = 4.   #?
@@ -237,6 +379,7 @@ class Robot:
         self.nub = [0]*5
         self.joints = [50, 150, 000, 000, 000]
         self.jointTargets = [50, 150, 000, 000, 000]
+        self.lastTarget = self.joints.copy()
 
         self.comms = Comms()
         self.comms.registerRobot(self)
@@ -491,6 +634,102 @@ class Robot:
 
 
         time.sleep(.1)
+
+    def inv_kin_closest(self,X, Y, Z, THX, THY, THZ, XTH0, XTH1, XTH2, XTH3, XTH4):
+
+        TH3 = math.asin((self.__T - Z - self.__HH * math.cos(-THY) + self.__HL * math.sin(-THY)) / (-self.__TL))
+        THK = - THY - TH3
+        dt = self.__TL * math.cos(TH3) + self.__HH * math.sin(-THY) + self.__HL * math.cos(-THY)
+        P2X = X - dt * math.cos(THZ)
+        P2Y = Y - dt * math.sin(THZ)
+        THR = math.atan2(P2Y, P2X)
+        R = math.sqrt(P2X ** 2 + P2Y ** 2)
+        GAMMA = math.acos((self.__L0 ** 2 + R ** 2 - self.__L1 ** 2) / (2 * self.__L0 * R))
+
+        # RIGHT
+        TH0R = THR - GAMMA
+        TH1R = 2 * GAMMA
+
+        # LEFT
+        TH0L = THR + GAMMA
+        TH1L = -2 * GAMMA
+
+        TH2R = THZ - TH0R - TH1R
+        TH2L = THZ - TH0L - TH1L
+
+        leftError = (TH0L - XTH0) ** 2 + (TH1L - XTH1) ** 2 + (TH2L - XTH2) ** 2
+        rightError = (TH0R - XTH0) ** 2 + (TH1R - XTH1) ** 2 + (TH2R - XTH2) ** 2
+
+        if rightError > leftError:
+            TH0 = TH0L
+            TH1 = TH1L
+            TH2 = TH2L
+        else:
+            TH0 = TH0R
+            TH1 = TH1R
+            TH2 = TH2R
+
+        PKX = self.__TL * math.cos(TH3) + self.__FL * math.sin(TH3 + THK)
+        PKY = self.__TL * math.sin(TH3) - self.__FL * math.cos(TH3 + THK)
+
+        F = math.sqrt(PKX ** 2 + (PKY) ** 2)
+        K = math.sqrt(PKX ** 2 + (PKY + self.__GL) ** 2)
+
+        ALPHA = math.acos((self.__GL ** 2 + K ** 2 - F ** 2) / (self.__GL * 2 * K))
+        BETA = math.acos((K ** 2 + self.__LL ** 2 - self.__BL ** 2) / (K * self.__LL * 2))
+        TH4 = math.pi - ALPHA - BETA
+
+        return TH0, TH1, TH2, TH3, TH4
+
+
+    def fwd_planar_partial_kin(self, TH0, TH1):
+        P2X = self.__L0 * math.cos(TH0) + self.__L1 * math.cos(TH0 + TH1)
+        P2Y = self.__L0 * math.sin(TH0) + self.__L1 * math.sin(TH0 + TH1)
+
+        return P2X, P2Y
+
+    def inv_planar_partial_kin_closest(self,P2X, P2Y, XTH0, XTH1):
+
+        THR = math.atan2(P2Y, P2X)
+        R = math.sqrt((P2X ** 2) + (P2Y ** 2))
+        GAMMA = math.acos((self.__L0 ** 2 + R ** 2 - self.__L1 ** 2) / (2 * self.__L0 * R))
+
+        # RIGHT
+        TH0R = THR - GAMMA
+        TH1R = 2 * GAMMA
+
+        # LEFT
+        TH0L = THR + GAMMA
+        TH1L = -2 * GAMMA
+
+        # leftError = ((TH0L - XTH0 + (2*math.pi)) % (2*math.pi)) ** 2 + ((TH1L - XTH1 + (2*math.pi)) % (2*math.pi)) ** 2
+        # rightError = ((TH0R - XTH0 + (2*math.pi)) % (2*math.pi)) ** 2 + ((TH1R - XTH1 + (2*math.pi)) % (2*math.pi)) ** 2
+
+        # leftError = abs((TH0L - XTH0 + (2*math.pi)) % (2*math.pi)) + abs((TH1L - XTH1 + (2*math.pi)) % (2*math.pi))
+        # rightError = abs((TH0R - XTH0 + (2*math.pi)) % (2*math.pi)) + abs((TH1R - XTH1 + (2*math.pi)) % (2*math.pi))
+        leftError = abs((TH0L - XTH0 + (2*math.pi)) % (2*math.pi))
+        if leftError>math.pi:
+            leftError = math.pi*2 - leftError
+        rightError = abs((TH0R - XTH0 + (2*math.pi)) % (2*math.pi))
+        if rightError>math.pi:
+            rightError = math.pi*2 - rightError
+
+        # print("TH0L, TH0R, XTH0: " +str([TH0L, TH0R, XTH0])+" TH1L, TH1R, XTH1: "+str( [TH1L, TH1R, XTH1])+" P2X, P2Y: "+str([P2X, P2Y]))
+
+        if rightError > leftError:
+            # print("arm left!    LE: " +str(leftError)+" RE: "+str(rightError))
+            TH0 = TH0L
+            TH1 = TH1L
+            # TH2 = TH2L
+        else:
+            # print("arm right!    LE: " +str(leftError)+" RE: "+str(rightError))
+            TH0 = TH0R
+            TH1 = TH1R
+            # TH2 = TH2R
+
+        valid = R < (self.__L0+self.__L1-0.1)
+
+        return (TH0 + (2*math.pi))%(2*math.pi), (TH1 + (2*math.pi))%(2*math.pi), valid
 
 
     def demoZK(self):
@@ -831,6 +1070,8 @@ class Robot:
         if abs(dZ) > .15:
             dz = .15 * abs(dZ) / dZ
 
+        # dZ = 0
+
         # if abs(dZ) > .25:
         #     dz = .25 * abs(dZ) / dZ
 
@@ -945,7 +1186,7 @@ class Robot:
         # print(" joints: "+str(self.joints)+" nub: "+str(self.nub)+" jointTargets: "+str(self.jointTargets) +" dZ,dP: "+str((dZ,dP)))
 
         # time.sleep(.05)
-        time.sleep(.08)
+        # time.sleep(.08)
         # time.sleep(.1)
         # SPEED ISSUES
         # time.sleep(.2)
@@ -1237,7 +1478,7 @@ class Robot:
         self.comms.parseLine()
         # calz1 = self.nub[1] - self.calVals[1]
         # calz2 = self.nub[4] - self.calVals[4]
-        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub, self.calVals)]
 
         # torque = calz1 - calz2
         # force = calz1 + calz2
@@ -1248,13 +1489,12 @@ class Robot:
                   0,
                   calNub[1] - calNub[4],
                   calNub[0] - calNub[3]]
-                # [X, Y, Z, THX, THY, THZ]
+        # [X, Y, Z, THX, THY, THZ]
 
         # gains = [0.0000041, 0.0000041, 0.0000041, 0, 0, 0]
         gains = [0, 0, 0, 0, 0, 0]
 
-        deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
-
+        deltas = [a_i * b_i for a_i, b_i in zip(gains, forces)]
 
         # gainF = 0.0000016  # .0001 # 0002
         # gainF = 0.0000021  # .0001 # 0002
@@ -1262,14 +1502,13 @@ class Robot:
 
         deltas = [(.15 * abs(delta) / delta) if abs(delta) > .15 else delta for delta in deltas]
 
-
-        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        # print("DZ DP: "+ str((dZ,dP)))
-        # print("F T: "+ str((force, torque)))
-        print("nub: " + str(self.nub) + " deltas: " + str(deltas) + "  Joints deg: " + str(self.joints) + "  Joints targ: " + str(self.jointTargets))
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
-        """nub = [y1, z1, x, y2, z2]"""
+        # print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # # print("DZ DP: "+ str((dZ,dP)))
+        # # print("F T: "+ str((force, torque)))
+        # print("nub: " + str(self.nub) + " deltas: " + str(deltas) + "  Joints deg: " + str(self.joints) + "  Joints targ: " + str(self.jointTargets))
+        # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        #
+        # """nub = [y1, z1, x, y2, z2]"""
 
         try:
 
@@ -1288,9 +1527,7 @@ class Robot:
             # groomedJoints[2] = 170
             groomedJoints = [-(a_i - b_i) for a_i, b_i in zip(groomedJoints, jointOffsets)]
 
-
-
-            print("Groomed Joints deg: " + str(groomedJoints))
+            # print("Groomed Joints deg: " + str(groomedJoints))
 
             groomedJoints = [xxxyyy * math.pi / 180. for xxxyyy in groomedJoints]
             # print("Groomed Joints: "+str(groomedJoints))
@@ -1321,9 +1558,11 @@ class Robot:
             # jointTargs[2] = 0
             # jointTargs[3] = 0
             # jointTargs[4] = 0
-            jointTargs = [((-a_i + b_i)+720)%360 for a_i, b_i in zip(jointTargs, jointOffsets)]
+            jointTargs = [((-a_i + b_i) + 720) % 360 for a_i, b_i in zip(jointTargs, jointOffsets)]
 
-            self.jointTargets = jointTargs.copy()
+            # self.jointTargets = jointTargs.copy()
+
+            print("joints: " + str(self.joints) + "targs: " + str(jointTargs) + "ds: " + str(deltas))
             # print("Joint Target Groomed: "+str(jointTargs))
 
             # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[0],self.joints[1])
@@ -1383,6 +1622,400 @@ class Robot:
         # SPEED ISSUES
         # time.sleep(.2)
 
+    def demoPLANAR90DTOTFIX(self):
+        self.comms.parseLine()
+        # calz1 = self.nub[1] - self.calVals[1]
+        # calz2 = self.nub[4] - self.calVals[4]
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+
+        # torque = calz1 - calz2
+        # force = calz1 + calz2
+        """nub = [y1, z1, x, y2, z2]"""
+        forces = [calNub[2],
+                  calNub[0] + calNub[3],
+                  calNub[1] + calNub[4],
+                  0,
+                  calNub[1] - calNub[4],
+                  calNub[0] - calNub[3]]
+                # [X, Y, Z, THX, THY, THZ]
+
+        # gains = [0.0000041, 0.0000041, 0.0000041, 0, 0, 0]
+        # gains = [0, 0.000005, 0, 0, 0, 0]
+        gains = [0, 0.0000025, 0, 0, 0, 0]
+
+        deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
+
+
+        # gainF = 0.0000016  # .0001 # 0002
+        # gainF = 0.0000021  # .0001 # 0002
+        gainF = 0.0000041  # .0001 # 0002 #BEST SO FAR
+
+        # deltas = [(1.5 * abs(delta) / delta) if abs(delta) > 1.5 else delta for delta in deltas]
+        deltas = [(.15 * abs(delta) / delta) if abs(delta) > .15 else delta for delta in deltas]
+
+
+        # print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # # print("DZ DP: "+ str((dZ,dP)))
+        # # print("F T: "+ str((force, torque)))
+        # print("nub: " + str(self.nub) + " deltas: " + str(deltas) + "  Joints deg: " + str(self.joints) + "  Joints targ: " + str(self.jointTargets))
+        # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        #
+        # """nub = [y1, z1, x, y2, z2]"""
+
+        try:
+
+            # GROOM JOINTS
+
+            groomedJoints = self.joints.copy()
+
+            jointOffsets = [85, 150, 180, 90, 180]
+
+            # groomedJoints[0] = -(groomedJoints[0] - 85)
+            # groomedJoints[1] = -(groomedJoints[1] - 150)
+            # # groomedJoints[0] = (groomedJoints[0] - 75)
+            # # groomedJoints[1] = (groomedJoints[1] - 150)
+            # groomedJoints[3] = 30
+            # groomedJoints[4] = 170
+            # groomedJoints[2] = 170
+            groomedJoints = [-(a_i - b_i) for a_i, b_i in zip(groomedJoints, jointOffsets)]
+
+
+
+            # print("Groomed Joints deg: " + str(groomedJoints))
+
+            groomedJoints = [xxxyyy * math.pi / 180. for xxxyyy in groomedJoints]
+            # print("Groomed Joints: "+str(groomedJoints))
+            # WORLDSPACE
+            X, Y, Z, THX, THY, THZ = self.fwdKin(groomedJoints[2], groomedJoints[3], groomedJoints[4], groomedJoints[1],
+                                                 groomedJoints[0])
+            self.world = [X, Y, Z, THX, THY, THZ]
+            # print("World Spa e: "+str(self.world))
+            # self.lastgood = groomedJoints.copy()
+            self.lastgood = self.joints.copy()
+
+            # WORLD TARGETS
+            self.worldTarg = self.world.copy()
+            self.worldTarg = [ai + bi for ai, bi in zip(self.worldTarg, deltas)]
+            # self.worldTarg = self.worldTarg - deltas
+            # print("World Target: "+str(self.worldTarg))
+
+            # JOINT TARGETS
+            TH0, TH1, TH2, TH3, TH4 = self.invKin(self.worldTarg[0], self.worldTarg[1], self.worldTarg[2],
+                                                  self.worldTarg[3], self.worldTarg[4], self.worldTarg[5])
+            jointTargs = [TH4, TH3, TH0, TH1, TH2]
+
+            # print("Joint Target: "+str(jointTargs))
+            # GROOM JOINT TARGETS
+            jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+            # jointTargs[0] = -jointTargs[0] + 85
+            # jointTargs[1] = -jointTargs[1] + 150
+            # jointTargs[2] = 0
+            # jointTargs[3] = 0
+            # jointTargs[4] = 0
+            jointTargs = [((-a_i + b_i)+720)%360 for a_i, b_i in zip(jointTargs, jointOffsets)]
+
+            self.jointTargets = jointTargs.copy()
+
+            print("forces: " + str(forces) + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
+            # print("Joint Target Groomed: "+str(jointTargs))
+
+            # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[0],self.joints[1])
+            # self.worldTarg = self.world.copy()
+            # self.jointTargets = self.invKin(self.worldTarg)
+
+            # ################################################# #
+            # self.jointTargets[1] = int(self.joints[1] -dP)    #
+            # self.jointTargets[0] = int(self.joints[0] -dZ)    #
+            # ################################################# #
+        except:
+            print("Kin Broke")
+            self.lastgoodPLANAR()
+            # # time.sleep(1)
+            # groomedJoints = self.lastgood.copy()
+            # X, Y, Z, THX, THY, THZ = self.fwdKin(groomedJoints[2], groomedJoints[3], groomedJoints[4], groomedJoints[1], groomedJoints[0])
+            # self.world = [X, Y, Z, THX, THY, THZ]
+            # # print("World Spa e: "+str(self.world))
+            #
+            # # WORLD TARGETS
+            # self.worldTarg = self.world.copy()
+            # self.worldTarg[2] = self.worldTarg[2] - dZ
+            # self.worldTarg[4] = self.worldTarg[4] - dP
+            #
+            # # print("World Target: "+str(self.worldTarg))
+            # try:
+            #     # JOINT TARGETS
+            #     TH0, TH1, TH2, TH3, TH4 = self.invKin(self.worldTarg[0], self.worldTarg[1], self.worldTarg[2],
+            #                                           self.worldTarg[3], self.worldTarg[4], self.worldTarg[5])
+            #     jointTargs = [TH4, TH3, TH0, TH1, TH2]
+            #
+            #     # print("Joint Target: "+str(jointTargs))
+            #     # GROOM JOINT TARGETS
+            #     jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+            #     jointTargs[0] = -jointTargs[0] + 85
+            #     jointTargs[1] = -jointTargs[1] + 150
+            #     self.jointTargets = jointTargs.copy()
+            #     # print("Joint Target Groomed: "+str(jointTargs))
+            #
+            #     # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[0],self.joints[1])
+            #     # self.worldTarg = self.world.copy()
+            #     # self.jointTargets = self.invKin(self.worldTarg)
+            #
+            #     # ################################################# #
+            #     # self.jointTargets[1] = int(self.joints[1] -dP)    #
+            #     # self.jointTargets[0] = int(self.joints[0] -dZ)    #
+            #     # ################################################# #
+            # except:
+            #     print("trying to move OOB")
+        # POSITIVE DOWN
+        # NUB ARRAY 2ND AND 5TH VALUES
+        # print(" joints: "+str(self.joints)+" nub: "+str(self.nub)+" jointTargets: "+str(self.jointTargets) +" dZ,dP: "+str((dZ,dP)))
+
+        # time.sleep(.05)
+        time.sleep(.2)
+        # time.sleep(.1)
+        # SPEED ISSUES
+        # time.sleep(.2)
+
+    def demoPLANAR90DHOTFIXYEET(self):
+        self.comms.parseLine()
+        # calz1 = self.nub[1] - self.calVals[1]
+        # calz2 = self.nub[4] - self.calVals[4]
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+
+        # torque = calz1 - calz2
+        # force = calz1 + calz2
+        """nub = [y1, z1, x, y2, z2]"""
+        forces = [calNub[2],
+                  calNub[0] + calNub[3],
+                  calNub[1] + calNub[4],
+                  0,
+                  calNub[1] - calNub[4],
+                  calNub[0] - calNub[3]]
+                # [X, Y, Z, THX, THY, THZ]
+
+        # gains = [0.0000041, 0.0000041, 0.0000041, 0, 0, 0]
+        # gains = [0, 0.000005, 0, 0, 0, 0]
+        gains = [0, 0.000025, 0, 0, 0, 0]
+        # gains = [0, 0, 0, 0, 0, 0]
+
+        deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
+
+        # deltas = [(1.5 * abs(delta) / delta) if abs(delta) > 1.5 else delta for delta in deltas]
+        deltas = [(.15 * abs(delta) / delta) if abs(delta) > .15 else delta for delta in deltas]
+
+
+        # print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # # print("DZ DP: "+ str((dZ,dP)))
+        # # print("F T: "+ str((force, torque)))
+        # print("nub: " + str(self.nub) + " deltas: " + str(deltas) + "  Joints deg: " + str(self.joints) + "  Joints targ: " + str(self.jointTargets))
+        # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        #
+        # """nub = [y1, z1, x, y2, z2]"""
+
+        try:
+
+            # GROOM JOINTS
+
+            groomedJoints = self.joints.copy()
+
+            jointOffsets = [85, 150, 180, 90, 180]
+
+            # groomedJoints[0] = -(groomedJoints[0] - 85)
+            # groomedJoints[1] = -(groomedJoints[1] - 150)
+            # # groomedJoints[0] = (groomedJoints[0] - 75)
+            # # groomedJoints[1] = (groomedJoints[1] - 150)
+            # groomedJoints[3] = 30
+            # groomedJoints[4] = 170
+            # groomedJoints[2] = 170
+            groomedJoints = [-(a_i - b_i) for a_i, b_i in zip(groomedJoints, jointOffsets)]
+
+
+
+            # print("Groomed Joints deg: " + str(groomedJoints))
+
+            groomedJoints = [xxxyyy * math.pi / 180. for xxxyyy in groomedJoints]
+            # print("Groomed Joints: "+str(groomedJoints))
+            # WORLDSPACE
+            X, Y, Z, THX, THY, THZ = self.fwdKin(groomedJoints[2], groomedJoints[3], groomedJoints[4], groomedJoints[1],
+                                                 groomedJoints[0])
+            self.world = [X, Y, Z, THX, THY, THZ]
+            # print("World Spa e: "+str(self.world))
+            # self.lastgood = groomedJoints.copy()
+            self.lastgood = self.joints.copy()
+
+            # WORLD TARGETS
+            self.worldTarg = self.world.copy()
+            self.worldTarg = [ai + bi for ai, bi in zip(self.worldTarg, deltas)]
+            # self.worldTarg = self.worldTarg - deltas
+            # print("World Target: "+str(self.worldTarg))
+
+            # JOINT TARGETS
+            TH0, TH1, TH2, TH3, TH4 = self.inv_kin_closest(self.worldTarg[0], self.worldTarg[1], self.worldTarg[2],
+                                                           self.worldTarg[3], self.worldTarg[4], self.worldTarg[5],
+                                                           groomedJoints[2], groomedJoints[3], groomedJoints[4],
+                                                           groomedJoints[1], groomedJoints[0])
+
+            jointTargs = [TH4, TH3, TH0, TH1, TH2]
+
+            # print("Joint Target: "+str(jointTargs))
+            # GROOM JOINT TARGETS
+            jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+            # jointTargs[0] = -jointTargs[0] + 85
+            # jointTargs[1] = -jointTargs[1] + 150
+            # jointTargs[2] = 0
+            # jointTargs[3] = 0
+            # jointTargs[4] = 0
+            jointTargs = [((-a_i + b_i)+720)%360 for a_i, b_i in zip(jointTargs, jointOffsets)]
+
+            self.jointTargets = jointTargs.copy()
+
+            print("forces: " + str(forces) + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
+            # print("Joint Target Groomed: "+str(jointTargs))
+
+            # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[0],self.joints[1])
+            # self.worldTarg = self.world.copy()
+            # self.jointTargets = self.invKin(self.worldTarg)
+
+            # ################################################# #
+            # self.jointTargets[1] = int(self.joints[1] -dP)    #
+            # self.jointTargets[0] = int(self.joints[0] -dZ)    #
+            # ################################################# #
+        except:
+            print("Kin Broke")
+            self.lastgoodPLANAR()
+            # # time.sleep(1)
+            # groomedJoints = self.lastgood.copy()
+            # X, Y, Z, THX, THY, THZ = self.fwdKin(groomedJoints[2], groomedJoints[3], groomedJoints[4], groomedJoints[1], groomedJoints[0])
+            # self.world = [X, Y, Z, THX, THY, THZ]
+            # # print("World Spa e: "+str(self.world))
+            #
+            # # WORLD TARGETS
+            # self.worldTarg = self.world.copy()
+            # self.worldTarg[2] = self.worldTarg[2] - dZ
+            # self.worldTarg[4] = self.worldTarg[4] - dP
+            #
+            # # print("World Target: "+str(self.worldTarg))
+            # try:
+            #     # JOINT TARGETS
+            #     TH0, TH1, TH2, TH3, TH4 = self.invKin(self.worldTarg[0], self.worldTarg[1], self.worldTarg[2],
+            #                                           self.worldTarg[3], self.worldTarg[4], self.worldTarg[5])
+            #     jointTargs = [TH4, TH3, TH0, TH1, TH2]
+            #
+            #     # print("Joint Target: "+str(jointTargs))
+            #     # GROOM JOINT TARGETS
+            #     jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+            #     jointTargs[0] = -jointTargs[0] + 85
+            #     jointTargs[1] = -jointTargs[1] + 150
+            #     self.jointTargets = jointTargs.copy()
+            #     # print("Joint Target Groomed: "+str(jointTargs))
+            #
+            #     # self.world = self.fwdKin(self.joints[2],self.joints[3],self.joints[4],self.joints[0],self.joints[1])
+            #     # self.worldTarg = self.world.copy()
+            #     # self.jointTargets = self.invKin(self.worldTarg)
+            #
+            #     # ################################################# #
+            #     # self.jointTargets[1] = int(self.joints[1] -dP)    #
+            #     # self.jointTargets[0] = int(self.joints[0] -dZ)    #
+            #     # ################################################# #
+            # except:
+            #     print("trying to move OOB")
+        # POSITIVE DOWN
+        # NUB ARRAY 2ND AND 5TH VALUES
+        # print(" joints: "+str(self.joints)+" nub: "+str(self.nub)+" jointTargets: "+str(self.jointTargets) +" dZ,dP: "+str((dZ,dP)))
+
+        # time.sleep(.05)
+        # time.sleep(.2)
+        # time.sleep(.08)
+        # time.sleep(.1)
+        # SPEED ISSUES
+        time.sleep(.2)
+
+
+    def demoPLANAR90DHOTFIXYEET2electricboogaloo(self):
+        # time.sleep(.2)
+        # time.sleep(1)
+        # time.sleep(.1)
+        time.sleep(.2)
+
+        self.comms.parseLine()
+        # calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,[0]*len(self.nub))]
+
+
+        """nub = [y1, z1, x, y2, z2]"""
+        forces = [calNub[2],
+                  calNub[0] + calNub[3],
+                  calNub[1] + calNub[4],
+                  0,
+                  calNub[1] - calNub[4],
+                  calNub[0] - calNub[3]]
+                # [X, Y, Z, THX, THY, THZ]
+
+        # gains = [0, 0.0000025, 0, 0, 0, 0]
+        # gains = [0, 0.000005, 0, 0, 0, 0]
+        gains = [0, 0, 0, 0, 0, 0]
+        # gains = [0.000000005, 0, 0, 0, 0, 0]
+
+        deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
+
+        # deltas = [(1.5 * abs(delta) / delta) if abs(delta) > 1.5 else delta for delta in deltas]
+        # deltas = [(.15 * abs(delta) / delta) if abs(delta) > .15 else delta for delta in deltas]
+        # deltas = [(.05 * abs(delta) / delta) if abs(delta) > .05 else delta for delta in deltas]
+        deltas = [(.1 * abs(delta) / delta) if abs(delta) > .1 else delta for delta in deltas]
+
+        # deltas = [.005,0,0,0,0,0]
+
+        try:
+
+            # GROOM JOINTS
+
+            # groomedJoints = self.joints.copy()
+            groomedJoints = self.lastTarget.copy()
+            jointOffsets = [85, 150, 0, -90, 0]
+
+            groomedJoints[0] = 0
+            groomedJoints[1] = 0
+            groomedJoints[2] = groomedJoints[2]
+            groomedJoints[3] = -((groomedJoints[3]+90)%360)
+            groomedJoints[4] = 0
+            groomedJoints = [deg * math.pi / 180 for deg in groomedJoints]
+
+            P2X, P2Y = self.fwd_planar_partial_kin(groomedJoints[2],groomedJoints[3])
+            P2X = P2X + deltas[0]
+            P2Y = P2Y - deltas[1]
+            TH0, TH1, valid = self.inv_planar_partial_kin_closest(P2X,P2Y,groomedJoints[2],groomedJoints[3])
+
+
+            jointTargs = [0, 0, TH0, TH1, 0]
+            jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+
+            jointTargs[0] = 85
+            jointTargs[1] = 150
+            jointTargs[2] = jointTargs[2]
+            jointTargs[3] = (((-jointTargs[3])-90)+720)%360
+            jointTargs[4] = 0
+
+            if valid:
+                self.jointTargets = jointTargs.copy()
+            else:
+                print("invalid position attempted")
+            fs = [ "%08.0f"%f for f in forces ]
+            # print("forces: " + str(fs).strip("'") + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
+            # print("nub: "+str([ "%08.0f"%f for f in calNub]))
+
+            # print("nub: "+str([ "%08.0f"%f for f in calNub]))
+            print("nub: " + str([f'{n:15}' for n in calNub]))
+            self.lastTarget = self.jointTargets.copy()
+
+        except:
+            print("Kin Broke")
+            print("joints: " + str(self.joints) + "  targs: " + str(self.jointTargets))
+
+            # self.lastgoodPLANAR()
+
+
+
+
 if __name__ == '__main__':
     r = Robot()
     # r.testKin()
@@ -1397,8 +2030,7 @@ if __name__ == '__main__':
         # r.demoZK327()
         # r.comms.getStatus()
         # print(r.nub)
-        r.demoPLANAR()
-    pass
-
-
-
+        # r.demoPLANAR()
+        # r.demoPLANAR90DTOTFIX()
+        # r.demoPLANAR90DHOTFIXYEET()
+        r.demoPLANAR90DHOTFIXYEET2electricboogaloo()
