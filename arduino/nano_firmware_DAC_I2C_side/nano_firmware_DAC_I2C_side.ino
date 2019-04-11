@@ -6,7 +6,8 @@
 //#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
-#define SENT_SIZE         4
+#define SENT_SIZE         20
+//#define SENT_SIZE         4
 #define PWM_PIN           5
 #define DIR_PIN           6
 //#define POT_PIN           A1
@@ -23,7 +24,7 @@
 #define DAC_MSB_PIN         A1
 
 
-// bottom tower
+// planar elbow
 float p = 10;
 float i = 0.003;
 float d = 1.5;

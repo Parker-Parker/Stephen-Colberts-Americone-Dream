@@ -57,9 +57,81 @@ class Comms:
 
     def parseLine(self):
         if self.serialPort.is_open:
+
+            self.serialPort.timeout = None
             # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
 
 
+
+            v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
+            v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
+            v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
+            v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
+            v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+
+            if int(v2)>170:
+                v2 = "170"
+                print("v2 capped at 170")
+
+            if int(v2)<115:
+                v2 = "115"
+                print("v2 capped at 115")
+
+            if int(v1)<35:
+                v1 = "035"
+                print("v2 capped at 035")
+            if int(v1)>105:
+                v1 = "105"
+                print("v2 capped at 105")
+            outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
+            self.serialPort.write(outline)
+            # print(outline)
+
+
+
+            message = self.serialPort.read(40)
+            # print(message)
+
+            print(str(outline)+" "+str(message))
+            joints = [0]*5
+            for i in range(5):
+                joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+
+            # nub = [0]*5
+            # for i in range(5):
+            #     nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+            #     if message[i * 4 - 20]==0 :
+            #         nub[i] = nub[i]
+            #     else:
+            #         nub[i] = -nub[i]
+
+            # nub = [0]*5
+            # for i in range(5):
+            #     nub[i] = message[(i*4-20):(i*4-16)]
+            #
+            # nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
+
+            nub = [0]*5
+            nub[0] = message[20:24]
+            nub[1] = message[24:28]
+            nub[2] = message[28:32]
+            nub[3] = message[32:36]
+            nub[4] = message[36:40]
+            # print(nub[4])
+            nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
+
+            # print(joints)
+            # print(nub)
+
+            self.robot.joints = joints
+            self.robot.nub = nub
+
+    def parseLineR(self):
+        if self.serialPort.is_open:
+            self.serialPort.timeout = 1
+            # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+
+            print("welcome to parseLineR")
 
             v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
             v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
@@ -88,7 +160,7 @@ class Comms:
 
 
             message = self.serialPort.read(40)
-            # print(message)
+            print(message)
 
             joints = [0]*5
             for i in range(5):
@@ -114,7 +186,7 @@ class Comms:
             nub[2] = message[28:32]
             nub[3] = message[32:36]
             nub[4] = message[36:40]
-            print(nub[4])
+            # print(nub[4])
             nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
 
             # print(joints)
@@ -385,10 +457,12 @@ class Robot:
         self.comms.registerRobot(self)
         self.calVals = self.nub.copy()
         self.calibrate()
+        # self.calibrateR()
 
         self.lastgood = self.jointTargets.copy()
         time.sleep(1)
         self.calibrate()
+        # self.calibrateR()
 
     def fwdKin(self, TH0, TH1, TH2, TH3, TH4):
             #     function[X, Y, Z, THX, THY, THZ] = Forwardplswork(TH0, TH1, TH2, TH3, TH4, self.HH, self.HL)
@@ -607,6 +681,59 @@ class Robot:
                         (cal1[3] + cal2[3] + cal3[3] + cal4[3] + cal5[3]) / 5,
                         (cal1[4] + cal2[4] + cal3[4] + cal4[4] + cal5[4]) / 5]
 
+    def calibrateR(self):
+
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(
+            self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        time.sleep(1)
+        self.comms.parseLineR()
+        cal1 = self.nub.copy()
+        time.sleep(1)
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints)+ "    Joints targ: " + str(self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
+        self.comms.parseLineR()
+        cal2 = self.nub.copy()
+        time.sleep(1)
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(
+            self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        time.sleep(1)
+        self.comms.parseLineR()
+        cal3 = self.nub.copy()
+
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(
+            self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        time.sleep(1)
+        self.comms.parseLineR()
+        cal4 = self.nub.copy()
+
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(
+            self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        time.sleep(1)
+        self.comms.parseLineR()
+        cal5 = self.nub.copy()
+
+        print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("nub: " + str(self.nub) + "    Joints deg: " + str(self.joints) + "    Joints targ: " + str(
+            self.jointTargets))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        time.sleep(1)
+        self.calVals = [(cal1[0] + cal2[0] + cal3[0] + cal4[0] + cal5[0]) / 5,
+                        (cal1[1] + cal2[1] + cal3[1] + cal4[1] + cal5[1]) / 5,
+                        (cal1[2] + cal2[2] + cal3[2] + cal4[2] + cal5[2]) / 5,
+                        (cal1[3] + cal2[3] + cal3[3] + cal4[3] + cal5[3]) / 5,
+                        (cal1[4] + cal2[4] + cal3[4] + cal4[4] + cal5[4]) / 5]
+
     def demoZ(self):
         self.comms.parseLine()
         # print(self.joints)
@@ -716,7 +843,8 @@ class Robot:
 
         # print("TH0L, TH0R, XTH0: " +str([TH0L, TH0R, XTH0])+" TH1L, TH1R, XTH1: "+str( [TH1L, TH1R, XTH1])+" P2X, P2Y: "+str([P2X, P2Y]))
 
-        if rightError > leftError:
+        # if rightError > leftError:
+        if True:
             # print("arm left!    LE: " +str(leftError)+" RE: "+str(rightError))
             TH0 = TH0L
             TH1 = TH1L
@@ -1935,11 +2063,14 @@ class Robot:
         # time.sleep(.2)
         # time.sleep(1)
         # time.sleep(.1)
-        time.sleep(.2)
+        # time.sleep(.2)
 
+        # self.comms.parseLineR()
         self.comms.parseLine()
-        # calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
-        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,[0]*len(self.nub))]
+
+
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+        # calNub = [a_i - b_i for a_i, b_i in zip(self.nub,[0]*len(self.nub))]
 
 
         """nub = [y1, z1, x, y2, z2]"""
@@ -1952,8 +2083,8 @@ class Robot:
                 # [X, Y, Z, THX, THY, THZ]
 
         # gains = [0, 0.0000025, 0, 0, 0, 0]
-        # gains = [0, 0.000005, 0, 0, 0, 0]
-        gains = [0, 0, 0, 0, 0, 0]
+        gains = [0, 0.000005, 0, 0, 0, 0]
+        # gains = [0, 0, 0, 0, 0, 0]
         # gains = [0.000000005, 0, 0, 0, 0, 0]
 
         deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
@@ -1982,7 +2113,7 @@ class Robot:
 
             P2X, P2Y = self.fwd_planar_partial_kin(groomedJoints[2],groomedJoints[3])
             P2X = P2X + deltas[0]
-            P2Y = P2Y - deltas[1]
+            P2Y = P2Y + deltas[1]
             TH0, TH1, valid = self.inv_planar_partial_kin_closest(P2X,P2Y,groomedJoints[2],groomedJoints[3])
 
 
@@ -2001,10 +2132,12 @@ class Robot:
                 print("invalid position attempted")
             fs = [ "%08.0f"%f for f in forces ]
             # print("forces: " + str(fs).strip("'") + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
-            # print("nub: "+str([ "%08.0f"%f for f in calNub]))
+            print("forces: " + str(fs).strip("'") + " nub: " + str([f'{n:15}' for n in calNub]) + "  joints: " + str(self.joints) + "  targs: " + str(
+                jointTargs) + "  ds: " + str(deltas))
 
             # print("nub: "+str([ "%08.0f"%f for f in calNub]))
-            print("nub: " + str([f'{n:15}' for n in calNub]))
+
+            # print("nub: " + str([f'{n:15}' for n in calNub]))
             self.lastTarget = self.jointTargets.copy()
 
         except:
@@ -2019,7 +2152,9 @@ class Robot:
 if __name__ == '__main__':
     r = Robot()
     # r.testKin()
+    last_time = time.clock()
     while True:
+        # print("Exec time: "+str(time.clock()-last_time)+"s")
         # print('hoi')
         # r.main()
         # r.demoZ()
@@ -2033,4 +2168,6 @@ if __name__ == '__main__':
         # r.demoPLANAR()
         # r.demoPLANAR90DTOTFIX()
         # r.demoPLANAR90DHOTFIXYEET()
+
         r.demoPLANAR90DHOTFIXYEET2electricboogaloo()
+        last_time = time.clock()

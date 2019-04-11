@@ -1,12 +1,13 @@
 #include <Wire.h>
-//#define SLAVE_ADDRESS     0x21  //TopTower
-#define SLAVE_ADDRESS     0x22  //BottomTower
+#define SLAVE_ADDRESS     0x21  //TopTower
+//#define SLAVE_ADDRESS     0x22  //BottomTower
 //#define SLAVE_ADDRESS     0x23
 //#define SLAVE_ADDRESS     0x24
 //#define SLAVE_ADDRESS     0x25
 
 #define RECIEVED_SIZE     4
-#define SENT_SIZE         4
+#define SENT_SIZE         20
+//#define SENT_SIZE         4
 #define PWM_PIN           5
 #define DIR_PIN           6
 #define POT_PIN           A1
@@ -20,19 +21,19 @@ int currPosition = 0;
 //int GAIN = 5;
 int GAIN = 270;
 // top tower
-//float p = 7;
-//float i = 0.003;
-//float d = 0.01;
-//int Lower_Bound = 115;
-//int Upper_Bound = 170;
+float p = 7;
+float i = 0.003;
+float d = 0.01;
+int Lower_Bound = 115;
+int Upper_Bound = 170;
 
 
 // bottom tower
-float p = 3;
-float i = 0.004;
-float d = 0;
-int Lower_Bound = 35;
-int Upper_Bound = 105;
+//float p = 3;
+//float i = 0.004;
+//float d = 0;
+//int Lower_Bound = 35;
+//int Upper_Bound = 105;
 
 unsigned long prev_time = 0;
 unsigned long curr_time = 0;

@@ -1,12 +1,13 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-#define SLAVE_ADDRESS     0x23  //base motor furthest
+//#define SLAVE_ADDRESS     0x23  //base motor furthest
 //#define SLAVE_ADDRESS     0x24  //base motor elbow
-//#define SLAVE_ADDRESS     0x25  //base motor stationary
+#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
-#define SENT_SIZE         4
+#define SENT_SIZE         20
+//#define SENT_SIZE         4
 #define PWM_PIN           5
 #define DIR_PIN           6
 #define POT_PIN           A1
@@ -34,19 +35,14 @@ volatile long ticks = 0;
 
 
 //// bottom stationary
-//float p = 8.5;
-//float i = 0.0008;
-//float d = 2;
-//int Lower_Bound = 35;
-//int Upper_Bound = 105;
-
+float p = 11;
+float i = 0.0008;
+float d = 2;
 
 // bottom tower
-float p = 11;
-float i = 0.000;
-float d = 0;
-int Lower_Bound = 35;
-int Upper_Bound = 105;
+//float p = 11;
+//float i = 0.000;
+//float d = 0;
 
 unsigned long prev_time = 0;
 unsigned long curr_time = 0;
