@@ -87,32 +87,7 @@ int  duty = (p*curr_error + i*integral_error + d*deriv_error);
     duty = 90;
   }
   analogWrite(PWM_PIN, duty);
-//    Serial.println(duty);
-//    Serial.print("Duty: ");
-//    Serial.print(duty);
-//    Serial.print(" Current: ");
-//    Serial.print(currPosition);
-//    Serial.print(" Target: ");
-//    Serial.println(setPoint);
 
-//  Serial.print("Current: ");
-//  Serial.print(currPosition);
-//  Serial.print("    Set: ");
-//  Serial.println(setPoint);
-//  Serial.print("    Diff: ");
-//  Serial.print(setPoint - currPosition);
-//  Serial.print("    Duty: ");
-//  Serial.print(duty);
-//  Serial.print("    Gain: ");
-//  Serial.print(GAIN);
-//  Serial.print("    GD: ");
-//  Serial.print(GAIN*(setPoint - currPosition));
-//  Serial.print("    GDD: ");
-//  Serial.print((GAIN*(setPoint - currPosition))/360);
-//  Serial.print("    GDD: ");
-//  Serial.print(GAIN*(setPoint - currPosition)/360);
-//  Serial.print("    Dir: ");
-//  Serial.println(digitalRead(DIR_PIN));
 
 }
 
@@ -127,7 +102,6 @@ void receiveEvent(int bytesReceived){
     if(i < RECIEVED_SIZE)
     {
       recievedSetPoint[i] = Wire.read();
-      //Serial.println(recievedSetPoint[i]);
     }
     else
     {
@@ -154,8 +128,5 @@ void get_byte_position(){
 }
 
 void serialEvent() {
-//    setPoint = (((Serial.parseInt())%270));
-//    Serial.println("SET!");
-//    prev_time = millis();
 
 }

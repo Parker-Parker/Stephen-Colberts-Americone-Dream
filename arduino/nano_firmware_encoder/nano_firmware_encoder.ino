@@ -21,8 +21,8 @@
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-volatile int setPoint = 0;
-volatile int currPosition = 0;
+volatile float setPoint = 0;
+volatile float currPosition = 0;
 long GAIN = 2000;
 
 volatile bool enc1 = true;
@@ -86,30 +86,6 @@ void encISR2(){
 
 
 
-/////////////////////////////////////
-// Method 2
-/////////////////////////////////////
-
-//
-//void fixTicks(){
-//  ticks = (ticks+ENC_TICKS)%ENC_TICKS;
-//}
-//
-//void encISR(){
-//  encDir = lastEnc? encDir : !encDir;
-//  encDir ? ticks++ : ticks--;
-//  fixTicks();
-//  lastEnc= false;
-//}
-//
-//void encISR2(){
-//  encDir = !lastEnc? encDir : !encDir;
-//  encDir ? ticks++ : ticks--;
-//  fixTicks();
-//  lastEnc= true;
-//}
-//
-
 
 void setup() {
   pinMode(ENC_PIN, INPUT);
@@ -118,9 +94,6 @@ void setup() {
 
   enc1 = digitalRead(ENC_PIN);
   enc2 = digitalRead(ENC2_PIN);
-//  // Test setup
-//  pinMode(8, OUTPUT);
-//  pinMode(9, OUTPUT);
 
   bool enc1 = digitalRead(ENC_PIN);
   bool enc2 = digitalRead(ENC2_PIN);
@@ -135,7 +108,7 @@ void setup() {
   pinMode(DIR_PIN, OUTPUT);
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
   setPoint = 0;
-  Serial.begin(9600);
+  //Serial.begin(9600);
   prev_time = millis();
 
 }
@@ -144,37 +117,6 @@ void setup() {
 int asdf = 0;
 long duty;
 void loop() {
-//  //////////////////////////////////////////////////////
-//  //////////////////////////////////////////////////////
-//  currPosition = (ticks*360)/ENC_TICKS;
-//  long duty = (GAIN*(setPoint - currPosition))/360;
-//  if(duty < 0){
-//    duty = duty*-1;
-//    digitalWrite(DIR_PIN, HIGH);
-//  }
-//  else{
-//    digitalWrite(DIR_PIN, LOW);
-//  }
-//  if(duty > 70){
-//    duty = 70;
-//  }
-  //////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////
-//  currPosition = (ticks*360)/ENC_TICKS;
-//
-//  int error = (setPoint - currPosition);
-//  if (error>180){
-//    duty = (GAIN*(error-360))/180;
-//  }
-//  else if (error<-180){
-//    duty = (GAIN*(error+360))/180;
-//  }
-//  else{
-//    duty = (GAIN*(error))/180;
-//  }
-///////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
 
   currPosition = (ticks*360)/ENC_TICKS;
 
@@ -218,85 +160,17 @@ void loop() {
   duty = 130;
   }
   analogWrite(PWM_PIN, duty);
-///////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-//
-//
-//
-//
-//
-//
-//  if(duty < 0){
-//    duty = duty*-1;
-//    digitalWrite(DIR_PIN, HIGH);
-//  }
-//  else{
-//    digitalWrite(DIR_PIN, LOW);
-//  }
-//  if(duty > 70){
-//    duty = 70;
-//  }
-//
-//
-//  analogWrite(PWM_PIN, duty);
-
-  //////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////
 
 
-  Serial.print("Current: ");
-  Serial.print(currPosition);
-  Serial.print("    Set: ");
-  Serial.println(setPoint);
-//  Serial.print("    Diff: ");
-//  Serial.print(setPoint - currPosition);
-//  Serial.print("    Duty: ");
-//  Serial.print(duty);
-//  Serial.print("    Gain: ");
-//  Serial.print(GAIN);
-//  Serial.print("    GD: ");
-//  Serial.print(GAIN*(setPoint - currPosition));
-//  Serial.print("    GDD: ");
-//  Serial.print((GAIN*(setPoint - currPosition))/360);
-//  Serial.print("    GDD: ");
-//  Serial.print(GAIN*(setPoint - currPosition)/360);
-//  Serial.print("    Dir: ");
-//  Serial.println(digitalRead(DIR_PIN));
+//  Serial.print("Current: ");
+//  Serial.print(currPosition);
+//  Serial.print("    Set: ");
+//  Serial.println(setPoint);
 
-/////////////////////////////////////
-// test code
-/////////////////////////////////////
-
-//  if(asdf>20){
-//  digitalWrite(8, LOW);
-//  digitalWrite(9, LOW);
-//  digitalWrite(8, HIGH);
-//  digitalWrite(9, HIGH);
-//
-//  }else{
-//  digitalWrite(8, LOW);
-//  digitalWrite(9, HIGH);
-//  digitalWrite(8, HIGH);
-//  digitalWrite(9, LOW);
-//  }
-//  asdf++;
-//  asdf = asdf>40 ? 0 : asdf;
-//
-//
-//  Serial.print("Deg:  ");
-//  Serial.println(currPosition);
-//  Serial.print("Tic:  ");
-//  Serial.println(ticks);
-//  Serial.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-//  delay(200);
 
 
 }
-/*
- *
- */
+
 void requestEvent(){
   get_byte_position();
   Wire.write(sentPosition, SENT_SIZE);
@@ -315,6 +189,8 @@ void receiveEvent(int bytesReceived){
     }
   }
   setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
+  // setpoints are transmitted scaled, 36000 = 360.00
+  setPoint = setPoint/100;
 //  Serial.println(setPoint);
 
   bool state = digitalRead(13); // um ok
