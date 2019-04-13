@@ -184,8 +184,8 @@ void receiveEvent(int bytesReceived){
 }
 
 void get_byte_position(){
-  sentPosition[0] = (currPosition & 255); 
-  sentPosition[1] = (currPosition & (255<<8))>>8; // lol clever
+  sentPosition[0] = (((int)(currPosition*100)) & 255); 
+  sentPosition[1] = (((int)(currPosition*100)) & (255<<8))>>8; // lol clever
 }
 
 

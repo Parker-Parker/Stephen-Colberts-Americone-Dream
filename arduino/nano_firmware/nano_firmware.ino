@@ -16,24 +16,22 @@
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-int setPoint = 0;
-int currPosition = 0;
+volatile float setPoint = 0;
+float currPosition = 0;
 //int GAIN = 5;
 int GAIN = 270;
-// top tower
-float p = 7;
-float i = 0.003;
-float d = 0.01;
-int Lower_Bound = 115;
-int Upper_Bound = 170;
+
+// position control var
+float p = 0;
+float i = 0;
+float d = 0;
+int Lower_Bound = 0;
+int Upper_Bound = 0;
 
 
-// bottom tower
-//float p = 3;
-//float i = 0.004;
-//float d = 0;
-//int Lower_Bound = 35;
-//int Upper_Bound = 105;
+
+
+
 
 unsigned long prev_time = 0;
 unsigned long curr_time = 0;
@@ -49,8 +47,24 @@ void setup() {
   Wire.onReceive(receiveEvent);
   pinMode(PWM_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
-  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,269);
+  currPosition = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
   setPoint = currPosition;
+  //top_tower
+  if (SLAVE_ADDRESS == 0x21){
+    p = 7;
+    i = 0.003;
+    d = 0.01;
+    Lower_Bound = 115;
+    Upper_Bound = 170;
+  }
+//bottom tower
+  else if (SLAVE_ADDRESS == 0x22){
+    p = 3;
+    i = 0.004;
+    d = 0;
+    Lower_Bound = 35;
+    Upper_Bound = 105;
+  }
   Serial.begin(9600);
   prev_time = millis();
 
@@ -58,7 +72,7 @@ void setup() {
 }
 
 void loop() {
-  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,269);
+  currPosition = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
   curr_error = setPoint - currPosition;
   curr_time = millis();
   dt = (curr_time - prev_time) + 1;
@@ -108,9 +122,9 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
-  setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
+  setPoint = (((recievedSetPoint[1])<<8) + recievedSetPoint[0])/100;
   if (setPoint > 360){
-    setPoint = map(analogRead(POT_PIN), 0, 1023, 0,269);
+    setPoint = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
   }
   if(setPoint < Lower_Bound){
     setPoint = Lower_Bound;
@@ -123,8 +137,8 @@ void receiveEvent(int bytesReceived){
 }
 
 void get_byte_position(){
-  sentPosition[0] = (currPosition & 255);
-  sentPosition[1] = (currPosition & (255<<8))>>8;
+  sentPosition[0] = (((int)(currPosition*100)) & 255);
+  sentPosition[1] = (((int)(currPosition*100)) & (255<<8))>>8;
 }
 
 void serialEvent() {

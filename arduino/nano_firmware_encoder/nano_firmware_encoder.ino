@@ -33,16 +33,11 @@ volatile bool encDir = true;
 
 volatile long ticks = 0;
 
+float p = 0;
+float i = 0;
+float d = 0;
 
-//// bottom stationary
-float p = 11;
-float i = 0.0008;
-float d = 2;
 
-// bottom tower
-//float p = 11;
-//float i = 0.000;
-//float d = 0;
 
 unsigned long prev_time = 0;
 unsigned long curr_time = 0;
@@ -107,6 +102,19 @@ void setup() {
   pinMode(PWM_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
+//// bottom stationary
+  if(SLAVE_ADDRESS == 0x25){
+  p = 11;
+  i = 0.0008;
+  d = 2;
+  }
+
+  //bottom tower
+  if(SLAVE_ADDRESS == 0x23){
+  p = 11;
+  i = 0.000;
+  d = 0;
+  }
   setPoint = 0;
   //Serial.begin(9600);
   prev_time = millis();
@@ -198,8 +206,8 @@ void receiveEvent(int bytesReceived){
 }
 
 void get_byte_position(){
-  sentPosition[0] = (currPosition & 255);
-  sentPosition[1] = (currPosition & (255<<8))>>8; // lol clever
+  sentPosition[0] = (((int)(currPosition *100))& 255);
+  sentPosition[1] = (((int)(currPosition *100))& (255<<8))>>8; // lol clever
 }
 
 
