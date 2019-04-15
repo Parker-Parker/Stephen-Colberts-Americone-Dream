@@ -63,7 +63,9 @@ void fixTicks(){
 }
 
 void encISR(){
-  enc1 = !enc1;
+  //enc1 = !enc1;
+    enc1 = digitalRead(ENC_PIN);
+  enc2 = digitalRead(ENC2_PIN);
   if(!enc1 != !enc2) {
     ticks++;
   }
@@ -74,7 +76,9 @@ void encISR(){
 }
 
 void encISR2(){
-  enc2 = !enc2;
+  //enc2 = !enc2;
+    enc1 = digitalRead(ENC_PIN);
+  enc2 = digitalRead(ENC2_PIN);
   if(!enc1 != !enc2) {
     ticks--;
   }
@@ -121,9 +125,6 @@ void setup() {
 //  // Test setup
 //  pinMode(8, OUTPUT);
 //  pinMode(9, OUTPUT);
-
-  bool enc1 = digitalRead(ENC_PIN);
-  bool enc2 = digitalRead(ENC2_PIN);
 
   attachInterrupt(digitalPinToInterrupt(ENC2_PIN), encISR2, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN), encISR, CHANGE);
@@ -303,6 +304,7 @@ void requestEvent(){
 }
 
 void receiveEvent(int bytesReceived){
+  Serial.println("rec event");
   for(int i = 0; i < bytesReceived; i++)
   {
     if(i < RECIEVED_SIZE)

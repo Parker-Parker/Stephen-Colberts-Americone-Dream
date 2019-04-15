@@ -90,7 +90,8 @@ void fixTicks(){
 }
 
 void encISR(){
-  enc1 = !enc1;
+    enc1 = digitalRead(ENC_PIN);
+  enc2 = digitalRead(ENC2_PIN);
   if(!enc1 != !enc2) {
     ticks++;
   }
@@ -101,7 +102,8 @@ void encISR(){
 }
 
 void encISR2(){
-  enc2 = !enc2;
+    enc1 = digitalRead(ENC_PIN);
+  enc2 = digitalRead(ENC2_PIN);
   if(!enc1 != !enc2) {
     ticks--;
   }
