@@ -110,14 +110,14 @@ void loop() {
   readDAC();
 
 
-  currPosition = (ticks*360)/ENC_TICKS;
+  currPosition = ticks;
 
   int error = (setPoint - currPosition);
-  if (error>180){
-    error = error-360;
+  if (error>ENC_TICKS/2){
+    error = error-ENC_TICKS;
   }
-  else if (error<-180){
-    error = error+360;
+  else if (error<-ENC_TICKS/2){
+    error = error+ENC_TICKS;
   }
   else{
     error = error;
@@ -178,14 +178,15 @@ void receiveEvent(int bytesReceived){
   }
   setPoint = (recievedSetPoint[1]<<8) + recievedSetPoint[0];
   // set point sent scaled, 36000 = 360.00
-  setPoint = setPoint/100;
+  setPoint = ENC_TICKS*(setPoint/36000);
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
 }
 
 void get_byte_position(){
-  sentPosition[0] = (((int)(currPosition*100)) & 255); 
-  sentPosition[1] = (((int)(currPosition*100)) & (255<<8))>>8; // lol clever
+  int prep = 36000*(currPosition/ENC_TICKS)
+  sentPosition[0] = ((prep) & 255); 
+  sentPosition[1] = ((prep) & (255<<8))>>8; // lol clever
 }
 
 

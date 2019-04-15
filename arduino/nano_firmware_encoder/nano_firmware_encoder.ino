@@ -21,8 +21,8 @@
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-volatile float setPoint = 0;
-volatile float currPosition = 0;
+volatile int setPoint = 0;
+volatile int currPosition = 0;
 long GAIN = 2000;
 
 volatile bool enc1 = true;
@@ -125,14 +125,14 @@ int asdf = 0;
 long duty;
 void loop() {
 
-  currPosition = (ticks*360)/ENC_TICKS;
+  currPosition = ticks;
 
   int error = (setPoint - currPosition);
-  if (error>180){
-  error = error-360;
+  if (error>ENC_TICKS/2){
+  error = error-ENC_TICKS;
   }
   else if (error<-180){
-  error = error+360;
+  error = error+ENC_TICKS;
   }
   else{
   error = error;
@@ -197,7 +197,7 @@ void receiveEvent(int bytesReceived){
   }
   setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
   // setpoints are transmitted scaled, 36000 = 360.00
-  setPoint = setPoint/100;
+  setPoint = ENC_TICKS*(setPoint/36000);
 //  Serial.println(setPoint);
 
   bool state = digitalRead(13); // um ok
