@@ -2283,6 +2283,129 @@ class Robot:
 
             # self.lastgoodPLANAR()
 
+    def demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRDthe3rdDimensionMuthafuckaaa(self):
+        # time.sleep(.2)
+        # time.sleep(1)
+        # time.sleep(.1)
+        # time.sleep(.2)
+
+        # self.comms.parseLineR()
+        self.comms.parseLine()
+
+
+        calNub = [a_i - b_i for a_i, b_i in zip(self.nub,self.calVals)]
+        # calNub = [a_i - b_i for a_i, b_i in zip(self.nub,[0]*len(self.nub))]
+
+
+        """nub = [y1, z1, x, y2, z2]"""
+        forces = [calNub[2],
+                  calNub[0] + calNub[3],
+                  calNub[1] + calNub[4],
+                  0,
+                  calNub[1] - calNub[4],
+                  calNub[0] - calNub[3]]
+                # [X, Y, Z, THX, THY, THZ]
+        # forces = [0 if abs(force) < 20 else force for force in forces[0:3]] +[0 if abs(torque) < 10000 else torque for torque in forces[3:6]]
+
+        # gains = [0, 0.0000025, 0, 0, 0, 0]
+        # gains = [0, 0.000005, 0, 0, 0, 0]
+        # gains = [0, 0, 0, 0, 0, 0]
+        # gains = [0.000005, 0, 0, 0, 0, 0]
+
+        # gains = [0.000005, 0.000005, 0, 0, 0, 0]
+        # gains = [0.00000, 0.00000, 0, 0, 0, 0.000005]
+        # gains = [0.000005, 0.000005, 0, 0, 0, 0.000005]
+
+
+        gains = [0.000005, 0.0000025, 0, 0, 0, 0.000005]
+        # gains = [0, 0.0000025, 0, 0, 0, 0.0000025]
+
+        deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
+
+        # deltas = [(1.5 * abs(delta) / delta) if abs(delta) > 1.5 else delta for delta in deltas]
+        # deltas = [(.15 * abs(delta) / delta) if abs(delta) > .15 else delta for delta in deltas]
+        # deltas = [(.05 * abs(delta) / delta) if abs(delta) > .05 else delta for delta in deltas]
+        # deltas = [(.1 * abs(delta) / delta) if abs(delta) > .1 else delta for delta in deltas]
+        deltas = [(.1 * abs(delta) / delta) if abs(delta) > .1 else delta for delta in deltas[0:3]] +[(4 * abs(delta) / delta) if abs(delta) > 4 else delta for delta in deltas[3:6]]
+
+        # deltas = [.005,0,0,0,0,0]
+
+        try:
+
+            # GROOM JOINTS
+
+            # groomedJoints = self.joints.copy()
+            groomedJoints = self.lastTarget.copy()
+            jointOffsets = [85, 150, 0, -90, 0]
+
+            groomedJoints[0] = 0
+            groomedJoints[1] = 0
+            groomedJoints[2] = groomedJoints[2]
+            groomedJoints[3] = -((groomedJoints[3]+90)%360)
+            # groomedJoints[4] = 0
+            groomedJoints[4] = groomedJoints[4]
+
+            # TH2 = groomedJoints[4] - (groomedJoints[2]-groomedJoints[3])
+
+            print("hi1")
+            groomedJoints = [deg * math.pi / 180 for deg in groomedJoints]
+
+            P2X, P2Y = self.fwd_planar_partial_kin(groomedJoints[2],groomedJoints[3])
+            P2X = P2X + deltas[0]
+            P2Y = P2Y + deltas[1]
+            TH0, TH1, valid = self.inv_planar_partial_kin_closest(P2X,P2Y,groomedJoints[2],groomedJoints[3])
+            # print("TH2, deltas[5],TH2 + deltas[5]: "+str([TH2, deltas[5],TH2 + deltas[5]]))
+            print("hi2")
+
+            # abso = 180/math.pi*math.atan2(P2Y + deltas[1],P2X + deltas[0])
+            # rela = 180/math.pi*math.atan2(deltas[1],deltas[0])
+
+
+            jointTargs = [0, 0, TH0, TH1, 0]
+            jointTargs = [xyxyxy * 180 / math.pi for xyxyxy in jointTargs]
+
+            # TH2 = ((TH2 + deltas[5]+(jointTargs[2]-jointTargs[3])) + 720) % 360
+
+            self.free1 = (self.free1 + deltas[5] + 360)
+
+            jointTargs[0] = 85
+            jointTargs[1] = 150
+            jointTargs[2] = jointTargs[2]
+            jointTargs[3] = (((-jointTargs[3])-90)+720)%360
+            # jointTargs[4] = 0
+            # jointTargs[4] = ((jointTargs[2] - jointTargs[3]) + 720) % 360
+            jointTargs[4] = ((jointTargs[2] - jointTargs[3]) + self.free1 + 720) % 360
+            # jointTargs[4] = TH2
+
+            # print("attempted move: " + str([P2X,P2Y]) + " rela: " + str(rela) +" abs: " + str(abso))
+
+            print("hi3")
+
+
+            if valid:
+                self.jointTargets = jointTargs.copy()
+            else:
+                print("invalid position attempted")
+                self.jointTargets[4] = jointTargs[4]
+            print("hi4")
+            fs = [ "%08.0f"%f for f in forces ]
+            # print("forces: " + str(fs).strip("'") + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
+            print("forces: " + str(fs).strip("'") + " nub: " + str([f'{n:15}' for n in calNub]) + "  joints: " + str(self.joints) + "  targs: " + str(
+                jointTargs) + "  timestamp: " + str(time.time()-self.ts) + "  ds: " + str(deltas))
+            # print("Y: "+fs[2])
+            # print("nub: "+str([ "%08.0f"%f for f in calNub]))
+
+            # print("nub: " + str([f'{n:15}' for n in calNub]))
+            self.lastTarget = self.jointTargets.copy()
+            print("hi5")
+
+        except Exception as e:
+            print("Kin Broke")
+            print(e)
+            print("joints: " + str(self.joints) + "  targs: " + str(self.jointTargets))
+
+            # self.lastgoodPLANAR()
+
     def demoZK327torque(self):
         self.comms.parseLine()
         calz1 = self.nub[1] - self.calVals[1]
