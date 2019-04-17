@@ -73,7 +73,15 @@ void setup() {
 
 void loop() {
   currPosition = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
+//  Serial.print("currPos: ");
+//  Serial.print(currPosition);
+//  Serial.print(" Set: ");
+//  Serial.print(setPoint);
+//  Serial.print(" err: ");
   curr_error = setPoint - currPosition;
+//  Serial.print(curr_error);
+//  Serial.print(" Duty: ");
+
   curr_time = millis();
   dt = (curr_time - prev_time) + 1;
  integral_error += (dt)*curr_error; //need to prevent overflow
@@ -100,7 +108,9 @@ int  duty = (p*curr_error + i*integral_error + d*deriv_error);
   if(duty > 90){
     duty = 90;
   }
+   // Serial.println(duty);
   analogWrite(PWM_PIN, duty);
+ 
 
 
 }
@@ -111,6 +121,7 @@ void requestEvent(){
 }
 
 void receiveEvent(int bytesReceived){
+  Serial.print("ic2");
   for(int i = 0; i < bytesReceived; i++)
   {
     if(i < RECIEVED_SIZE)
@@ -141,6 +152,10 @@ void get_byte_position(){
   sentPosition[1] = (((int)(currPosition*100)) & (255<<8))>>8;
 }
 
-void serialEvent() {
-
-}
+//void serialEvent() {
+//    float yeet = Serial.parseInt();
+//    if(yeet>=0){
+//      setPoint = (yeet);
+//    }
+//    curr_time = millis();
+//}

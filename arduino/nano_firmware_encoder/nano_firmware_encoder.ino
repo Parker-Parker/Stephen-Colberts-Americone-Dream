@@ -1,9 +1,9 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-//#define SLAVE_ADDRESS     0x23  //base motor furthest
+#define SLAVE_ADDRESS     0x23  //base motor furthest
 //#define SLAVE_ADDRESS     0x24  //base motor elbow
-#define SLAVE_ADDRESS     0x25  //base motor stationary
+//#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         20
@@ -23,6 +23,7 @@ byte sentPosition[SENT_SIZE];
 
 volatile int setPoint = 0;
 volatile int currPosition = 0;
+int error = 0;
 long GAIN = 2000;
 
 volatile bool enc1 = true;
@@ -103,19 +104,19 @@ void setup() {
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
 //// bottom stationary
   if(SLAVE_ADDRESS == 0x25){
-  p = 11;
-  i = 0.0008;
-  d = 2;
+  p = 0.4;
+  i = 0.003;
+  d = 0.001;
   }
 
   //bottom tower
   if(SLAVE_ADDRESS == 0x23){
-  p = 11;
-  i = 0.000;
-  d = 0;
+  p = 0.251;
+  i = 0.00084;
+  d = 0.0010;
   }
   setPoint = 0;
-  //Serial.begin(9600);
+//  Serial.begin(9600);
   prev_time = millis();
 
 }
@@ -126,17 +127,25 @@ long duty;
 void loop() {
 
   currPosition = ticks;
+  Serial.print("set: ");
+  Serial.print(setPoint);
+  Serial.print(" pos: ");
+  Serial.print(currPosition);
 
-  int error = (setPoint - currPosition);
-  if (error>ENC_TICKS/2){
+  error = (setPoint - currPosition);
+  Serial.print(" error: ");
+ Serial.print(error);
+  if (error>(ENC_TICKS/2)){
   error = error-ENC_TICKS;
   }
-  else if (error<-180){
+  else if (error<-(ENC_TICKS/2)){
   error = error+ENC_TICKS;
   }
   else{
   error = error;
   }
+  Serial.print(" new_err: ");
+   Serial.println(error);
   
   curr_error = error;
   curr_time = millis();
@@ -184,6 +193,7 @@ void requestEvent(){
 }
 
 void receiveEvent(int bytesReceived){
+  Serial.print("HELLOOOOOOOOOOOOOOOOOOOOOOOOOO");
   for(int i = 0; i < bytesReceived; i++)
   {
     if(i < RECIEVED_SIZE)
@@ -211,9 +221,10 @@ void get_byte_position(){
 
 
 
-void serialEvent() {
-    int yeet = Serial.parseInt()+720;
-    if(yeet>=0){
-      setPoint = ((yeet%360));
-    }
-}
+//void serialEvent() {
+//    int yeet = Serial.parseInt();
+//    if(yeet>=0){
+//      setPoint = ((yeet%6400));
+//    }
+//    curr_time = millis();
+//}

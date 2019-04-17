@@ -20,31 +20,30 @@
 //#define ENC2_PIN          3
 #define ENC_TICKS         6400
 
-#define DAC_LSB_PIN         A2
-#define DAC_MSB_PIN         A1
+#define DAC_LSB_PIN         A1
+#define DAC_MSB_PIN         A2
 
 
 // planar elbow
-float p = 10;
-float i = 0.003;
-float d = 1.5;
+float p = 0.3;
+float i = 0.001;
+float d = 0.001;
 int Lower_Bound = 35;
 int Upper_Bound = 105;
-
-unsigned long prev_time = 0;
-unsigned long curr_time = 0;
-float curr_error = 0.0;
-float prev_error = 0.0;
+long prev_time = 0;
+long curr_time = 0;
+int curr_error = 0.0;
+int prev_error = 0.0;
 float integral_error = 0.0;
 float deriv_error = 0.0;
-unsigned long dt = 1;
+long dt = 1;
 
 
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-volatile float setPoint = 0;
-volatile float currPosition = 0;
+volatile int setPoint = 0;
+volatile int currPosition = 0;
 long GAIN = 7;
 
 volatile bool enc1 = true;
@@ -61,24 +60,41 @@ void readDAC(){
 
   int x1x1 = analogRead(DAC_LSB_PIN);
   //long x1 = (x1x1 & 1016)>>3;
-  long x1 = x1x1 & 1016;
+  long x1 = (x1x1 & 0x3F0);
   
-  int x2x2 = analogRead(DAC_MSB_PIN);
-  long x2 = x2x2 & (1008);
+  
+  int x2x2 = analogRead(DAC_MSB_PIN)+2;
+  long x2 = (x2x2 & (0x3F0));
 
   //yellow
-  long Low_MSB = (x1 & 896) >> 7;
-  long Low_LSB = (x1 & 120) >> 3;
+  long Low_MSB = (x1 & 0x380) >> 7;
+  long Low_LSB = (x1 & 0x78) >> 3;
+//  Serial.print("Low MSB: ");
+//  Serial.print(Low_MSB);
   //orange
-  long High_MSB = (x2 & 896) >> 4;
-  long High_LSB = (x2 & 112);
+  long High_MSB = (x2 & 0x380) >> 4;
+  long High_LSB = (x2 & 0x70);
+//  Serial.print(" HIGH MSB: ");
+//  Serial.print(High_MSB);
 
   long MSB = Low_MSB + High_MSB;
   long LSB = Low_LSB + High_LSB;
+
+  
+//  Serial.print(" MSB: ");
+//  Serial.print(MSB);
+//  Serial.print(" LSB: ");
+//  Serial.print(LSB);
+//  Serial.print("MSB: ");
+//  Serial.print(MSB);
+//  Serial.print(" LSB: ");
+//  Serial.println(LSB);
   
   ticks = LSB + (MSB << 7);
   
-  
+//  Serial.print(" ticks: ");
+//  Serial.println(ticks);
+//  
 }
 
 
@@ -126,17 +142,34 @@ void loop() {
   curr_error = error;
   curr_time = millis();
   dt = (curr_time - prev_time) + 1;
+//  Serial.print("dt*curr: ");
+//  Serial.print(dt*curr_error);
+//  Serial.print(" curr: ");
+//  Serial.print(curr_error);
+//  Serial.print( "dt: ");
+//  Serial.print(dt);
+//Serial.print(" prev_i err: ");
+//Serial.print(integral_error);
   integral_error += (dt)*curr_error; //need to prevent overflow
-  if(integral_error > 10000){
-    integral_error = 10000;
+//Serial.print(" next_i err: ");
+//Serial.print(integral_error);
+  if(integral_error > 100000){
+    integral_error = 100000;
   }
   
-  if(integral_error < -10000){
-    integral_error = -10000;
+  if(integral_error < -100000){
+    integral_error = -100000;
   }
+  Serial.print(" i err: ");
+  Serial.print(i * integral_error);
   
   deriv_error = (curr_error - prev_error)/(dt);
-  int  duty = (p*curr_error + i*integral_error + d*deriv_error);
+
+  Serial.print(" d term: ");
+  Serial.print(-d*deriv_error);
+  Serial.print(" p err: ");
+  Serial.print(p*curr_error);
+  int  duty = (p*curr_error + i*integral_error - d*deriv_error);
   prev_time = curr_time;
   
   if(duty < 0){
@@ -148,10 +181,18 @@ void loop() {
   duty = duty;
   }
   
-  if(duty > 90){
-  duty = 90;
+  if(duty > 180){
+  duty = 180;
   }
   analogWrite(PWM_PIN, duty);
+  Serial.print(" duty: ");
+  Serial.print(duty);
+  Serial.print(" position: ");
+  Serial.print(currPosition);
+  Serial.print(" setPoint: ");
+  Serial.println(setPoint);
+//  Serial.print(" Err: ");
+//  Serial.println(curr_error);
 
 //  Serial.print("    Current: ");
 //  Serial.print(currPosition);
@@ -184,7 +225,7 @@ void receiveEvent(int bytesReceived){
 }
 
 void get_byte_position(){
-  int prep = 36000*(currPosition/ENC_TICKS)
+  int prep = 36000*(currPosition/ENC_TICKS);
   sentPosition[0] = ((prep) & 255); 
   sentPosition[1] = ((prep) & (255<<8))>>8; // lol clever
 }
@@ -192,9 +233,6 @@ void get_byte_position(){
 
 
 void serialEvent() {    
-    int yeet = Serial.parseInt()+720;
-    if(yeet>=0){
-      setPoint = ((yeet%360));
-    }
+   setPoint = Serial.parseInt();
 }
 
