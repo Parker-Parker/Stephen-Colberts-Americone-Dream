@@ -26,6 +26,7 @@ class Comms:
                 # self.serialPort.setPort(i.device)
                 print(i)
                 self.serialPort = serial.Serial(i.device)
+        self.serialPort.baudrate = 115200
         # self.robot = Robot
 
     def registerRobot(self, robot):
@@ -63,95 +64,25 @@ class Comms:
 
 
 
-            v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
-            v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
-            v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
-            v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
-            v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
+            v1 = str(abs(int(self.robot.jointTargets[0]*100))).zfill(5)
+            v2 = str(abs(int(self.robot.jointTargets[1]*100))).zfill(5)
+            v3 = str(abs(int(self.robot.jointTargets[2]*100))).zfill(5)
+            v4 = str(abs(int(self.robot.jointTargets[3]*100))).zfill(5)
+            v5 = str(abs(int(self.robot.jointTargets[4]*100))).zfill(5)
 
-            if int(v2)>170:
-                v2 = "170"
+            if int(v2)>17000:
+                v2 = "17000"
                 print("v2 capped at 170")
 
-            if int(v2)<115:
-                v2 = "115"
+            if int(v2)<11500:
+                v2 = "11500"
                 print("v2 capped at 115")
 
-            if int(v1)<35:
-                v1 = "035"
+            if int(v1)<3500:
+                v1 = "03500"
                 print("v2 capped at 035")
-            if int(v1)>105:
-                v1 = "105"
-                print("v2 capped at 105")
-            outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
-            self.serialPort.write(outline)
-            # print(outline)
-
-
-
-            message = self.serialPort.read(40)
-            # print(message)
-
-            print(str(outline)+" "+str(message))
-            joints = [0]*5
-            for i in range(5):
-                joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
-
-            # nub = [0]*5
-            # for i in range(5):
-            #     nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
-            #     if message[i * 4 - 20]==0 :
-            #         nub[i] = nub[i]
-            #     else:
-            #         nub[i] = -nub[i]
-
-            # nub = [0]*5
-            # for i in range(5):
-            #     nub[i] = message[(i*4-20):(i*4-16)]
-            #
-            # nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
-
-            nub = [0]*5
-            nub[0] = message[20:24]
-            nub[1] = message[24:28]
-            nub[2] = message[28:32]
-            nub[3] = message[32:36]
-            nub[4] = message[36:40]
-            # print(nub[4])
-            nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
-
-            # print(joints)
-            # print(nub)
-
-            self.robot.joints = joints
-            self.robot.nub = nub
-
-    def parseLineR(self):
-        if self.serialPort.is_open:
-            self.serialPort.timeout = 1
-            # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
-
-            print("welcome to parseLineR")
-
-            v1 = str(abs(int(self.robot.jointTargets[0]))).zfill(3)
-            v2 = str(abs(int(self.robot.jointTargets[1]))).zfill(3)
-            v3 = str(abs(int(self.robot.jointTargets[2]))).zfill(3)
-            v4 = str(abs(int(self.robot.jointTargets[3]))).zfill(3)
-            v5 = str(abs(int(self.robot.jointTargets[4]))).zfill(3)
-
-            if int(v2)>170:
-                v2 = "170"
-                print("v2 capped at 170")
-
-            if int(v2)<115:
-                v2 = "115"
-                print("v2 capped at 115")
-
-            if int(v1)<35:
-                v1 = "035"
-                print("v2 capped at 035")
-            if int(v1)>105:
-                v1 = "105"
+            if int(v1)>10500:
+                v1 = "10500"
                 print("v2 capped at 105")
             outline = (" " + v1 + " " + v2 + " " + v3 + " " + v4 + " " + v5).encode("ASCII", "ignore")
             self.serialPort.write(outline)
@@ -159,12 +90,14 @@ class Comms:
 
 
 
-            message = self.serialPort.read(40)
+            # message = self.serialPort.read(5*6+20)
+            message = self.serialPort.read(50)
             print(message)
 
+            # print(str(outline)+" "+str(message))
             joints = [0]*5
             for i in range(5):
-                joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+                joints[i] = int(message[i*6:i*6+6].decode("ASCII"))
 
             # nub = [0]*5
             # for i in range(5):
@@ -181,11 +114,11 @@ class Comms:
             # nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
 
             nub = [0]*5
-            nub[0] = message[20:24]
-            nub[1] = message[24:28]
-            nub[2] = message[28:32]
-            nub[3] = message[32:36]
-            nub[4] = message[36:40]
+            nub[0] = message[30:34]
+            nub[1] = message[34:38]
+            nub[2] = message[38:42]
+            nub[3] = message[42:46]
+            nub[4] = message[46:50]
             # print(nub[4])
             nub = [int.from_bytes(b, byteorder='big', signed=True) for b in nub]
 
