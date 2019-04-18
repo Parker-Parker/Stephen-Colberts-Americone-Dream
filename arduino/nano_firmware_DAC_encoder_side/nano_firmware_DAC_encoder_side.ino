@@ -194,7 +194,7 @@ void setup() {
   pinMode(ENC_PIN, INPUT);
   pinMode(ENC2_PIN, INPUT);
 
- // Serial.begin(9600);
+  Serial.begin(9600);
 
   pinMode(DAC_LSB_PIN0, OUTPUT);
   pinMode(DAC_LSB_PIN1, OUTPUT);
@@ -246,7 +246,7 @@ void loop() {
 
 
 //  Serial.print("Ticks: ");
-//  Serial.println(ticks);
+  Serial.println(ticks);
 //  Serial.print("Current: ");
 //  Serial.print(currPosition);
 //  Serial.print("    Set: ");
