@@ -1,6 +1,6 @@
 #include <Wire.h>
-#define SLAVE_ADDRESS     0x21  //TopTower
-//#define SLAVE_ADDRESS     0x22  //BottomTower
+//#define SLAVE_ADDRESS     0x21  //TopTower
+#define SLAVE_ADDRESS     0x22  //BottomTower
 //#define SLAVE_ADDRESS     0x23
 //#define SLAVE_ADDRESS     0x24
 //#define SLAVE_ADDRESS     0x25

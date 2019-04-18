@@ -1,9 +1,9 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-#define SLAVE_ADDRESS     0x23  //base motor furthest
+//#define SLAVE_ADDRESS     0x23  //base motor furthest
 //#define SLAVE_ADDRESS     0x24  //base motor elbow
-//#define SLAVE_ADDRESS     0x25  //base motor stationary
+#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         20
@@ -116,7 +116,7 @@ void setup() {
   d = 0.0010;
   }
   setPoint = 0;
-//  Serial.begin(9600);
+  Serial.begin(9600);
   prev_time = millis();
 
 }
@@ -193,7 +193,7 @@ void requestEvent(){
 }
 
 void receiveEvent(int bytesReceived){
-  Serial.print("HELLOOOOOOOOOOOOOOOOOOOOOOOOOO");
+  //Serial.println("Rec");
   for(int i = 0; i < bytesReceived; i++)
   {
     if(i < RECIEVED_SIZE)
