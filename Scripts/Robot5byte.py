@@ -2266,7 +2266,11 @@ class Robot:
         # gains = [0.000004, 0.0000025, 0.0000035, 0, 0.0000007, 0.00001]
         # gains = [0.000004, 0.0000025, 0.00000, 0, 0.000000, 0.0000]
         # gains = [0.00000035, 0.00000025, 0.000004, 0, 0.0000003, 0.000005]
-        gains = [0.0000035, 0.0000025, 0.000004, 0, 0.000007, 0.000005]
+        # gains = [0.0000035, 0.0000025, 0.000004, 0, 0.000007, 0.000005] # last good
+        # gains = [0.0000035, 0.0000025, 0.00000, 0, 0.0000, 0.000005]
+        gains = [0.0000035, 0.0000025, 0.00000, 0, 0.0000, 0.000000]
+        # gains = [0.00000, 0.0000025, 0.00000, 0, 0.0000, 0.000000]
+        # gains = [0.00000035, 0.00000025, 0.00000, 0, 0.0000, 0.0000005]
 
 
         deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
@@ -2296,7 +2300,7 @@ class Robot:
 
             # TH2 = groomedJoints[4] - (groomedJoints[2]-groomedJoints[3])
 
-            print("hi1")
+            # print("hi1")
             groomedJoints = [deg * math.pi / 180 for deg in groomedJoints]
             TH0 = groomedJoints[2]
             TH1 = groomedJoints[3]
@@ -2310,18 +2314,18 @@ class Robot:
                 valid = False
                 print("planar kin dead")
             # print("TH2, deltas[5],TH2 + deltas[5]: "+str([TH2, deltas[5],TH2 + deltas[5]]))
-            print("hi2")
+            # print("hi2")
             TH3 = groomedJoints[1]
             TH4 = groomedJoints[0]
             try:
                 xxx, yyy, zzz, txxx, tyyy, tzzz = self.fwdKin(1.1*math.pi,1.1*math.pi,1.1*math.pi, groomedJoints[1], groomedJoints[0])
-                print("hi2.1")
+                # print("hi2.1")
                 zzz = zzz-deltas[2]
                 tyyy = tyyy+deltas[4]
                 trash, trash, trash, TH3, TH4 = self.invKin(xxx, yyy, zzz, txxx, tyyy, tzzz)
                 # trash, trash, trash, TH3, TH4 = self.invKin(xxx, yyy, 21, txxx, tyyy, tzzz)
 
-                print("hi2.3")
+                # print("hi2.3")
 
             except Exception as e:
                 print(e)
@@ -2329,7 +2333,7 @@ class Robot:
             except:
                 print("zeds ded")
 
-            print("hi2.99")
+            # print("hi2.99")
             # abso = 180/math.pi*math.atan2(P2Y + deltas[1],P2X + deltas[0])
             # rela = 180/math.pi*math.atan2(deltas[1],deltas[0])
 
@@ -2359,7 +2363,7 @@ class Robot:
 
             # print("attempted move: " + str([P2X,P2Y]) + " rela: " + str(rela) +" abs: " + str(abso))
 
-            print("hi3")
+            # print("hi3")
 
 
             if valid:
@@ -2370,8 +2374,9 @@ class Robot:
             # print("hi4")
             fs = [ "%08.0f"%f for f in forces ]
             # print("forces: " + str(fs).strip("'") + "  joints: " + str(self.joints) + "  targs: " + str(jointTargs) + "  ds: " + str(deltas))
-            print("forces: " + str(fs).strip("'") + " nub: " + str([f'{n:15}' for n in calNub]) + "  joints: " + str(self.joints) + "  targs: " + str(
-                jointTargs) + "  timestamp: " + str(time.time()-self.ts) + "  ds: " + str(deltas))
+            # print("forces: " + str(fs).strip("'") + " nub: " + str([f'{n:15}' for n in calNub]) + "  joints: " + str(self.joints) + "  targs: " + str(
+            #     jointTargs) + "  timestamp: " + str(time.time()-self.ts) + "  ds: " + str(deltas))
+
             # print("Y: "+fs[2])
             # print("nub: "+str([ "%08.0f"%f for f in calNub]))
 
@@ -2562,5 +2567,5 @@ if __name__ == '__main__':
         # r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRD()
         r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRDthe3rdDimensionMuthafuckaaa()
         # print("Exec time: "+str(time.clock()-last_time)+"s")
-
+        time.sleep(.1)
         last_time = time.clock()
