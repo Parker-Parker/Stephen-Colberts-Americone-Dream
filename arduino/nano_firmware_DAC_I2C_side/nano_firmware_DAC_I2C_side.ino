@@ -25,8 +25,8 @@
 
 
 // planar elbow
-float p = 0.3;
-float i = 0.001;
+float p = 0.2;
+float i = 0.00015;
 float d = 0.001;
 int Lower_Bound = 35;
 int Upper_Bound = 105;
@@ -42,8 +42,8 @@ long dt = 1;
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-volatile int setPoint = 0;
-volatile int currPosition = 0;
+volatile long setPoint = 0;
+volatile long currPosition = 0;
 long GAIN = 7;
 
 volatile bool enc1 = true;
@@ -114,7 +114,6 @@ void setup() {
   
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
   setPoint = 0;
-  Serial.begin(9600);
     prev_time = millis();
 
 }
@@ -160,15 +159,11 @@ void loop() {
   if(integral_error < -100000){
     integral_error = -100000;
   }
-  Serial.print(" i err: ");
-  Serial.print(i * integral_error);
+
   
   deriv_error = (curr_error - prev_error)/(dt);
 
-  Serial.print(" d term: ");
-  Serial.print(-d*deriv_error);
-  Serial.print(" p err: ");
-  Serial.print(p*curr_error);
+  
   int  duty = (p*curr_error + i*integral_error - d*deriv_error);
   prev_time = curr_time;
   
@@ -185,19 +180,7 @@ void loop() {
   duty = 180;
   }
   analogWrite(PWM_PIN, duty);
-  Serial.print(" duty: ");
-  Serial.print(duty);
-  Serial.print(" position: ");
-  Serial.print(currPosition);
-  Serial.print(" setPoint: ");
-  Serial.println(setPoint);
-//  Serial.print(" Err: ");
-//  Serial.println(curr_error);
 
-//  Serial.print("    Current: ");
-//  Serial.print(currPosition);
-//  Serial.print("  Set: ");
-//  Serial.println(setPoint);
 }
 
 void requestEvent(){
@@ -217,22 +200,17 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
-  setPoint = (recievedSetPoint[1]<<8) + recievedSetPoint[0];
+  setPoint = ((recievedSetPoint[1]<<8) + recievedSetPoint[0])&0xFFFF;
   // set point sent scaled, 36000 = 360.00
-  setPoint = ENC_TICKS*(setPoint/36000);
+  setPoint = ENC_TICKS*((float)setPoint/36000);
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
 }
 
 void get_byte_position(){
-  int prep = 36000*(currPosition/ENC_TICKS);
-  sentPosition[0] = ((prep) & 255); 
-  sentPosition[1] = ((prep) & (255<<8))>>8; // lol clever
+  sentPosition[0] = (((int)((float)currPosition *36000/ENC_TICKS))& 255);
+  sentPosition[1] = (((int)((float)currPosition *36000/ENC_TICKS))& (255<<8))>>8; // lol clever
 }
 
 
-
-void serialEvent() {    
-   setPoint = Serial.parseInt();
-}
 

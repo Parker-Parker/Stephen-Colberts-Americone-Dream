@@ -21,8 +21,8 @@
 byte recievedSetPoint[RECIEVED_SIZE];
 byte sentPosition[SENT_SIZE];
 
-volatile int setPoint = 0;
-volatile int currPosition = 0;
+volatile long setPoint = 0;
+volatile long currPosition = 0;
 int error = 0;
 long GAIN = 2000;
 
@@ -116,7 +116,6 @@ void setup() {
   d = 0.0010;
   }
   setPoint = 0;
-  Serial.begin(9600);
   prev_time = millis();
 
 }
@@ -127,14 +126,14 @@ long duty;
 void loop() {
 
   currPosition = ticks;
-  Serial.print("set: ");
-  Serial.print(setPoint);
-  Serial.print(" pos: ");
-  Serial.print(currPosition);
+//  Serial.print("set: ");
+//  Serial.print(setPoint);
+//  Serial.print(" pos: ");
+//  Serial.print(currPosition);
 
   error = (setPoint - currPosition);
-  Serial.print(" error: ");
- Serial.print(error);
+ // Serial.print(" error: ");
+// Serial.print(error);
   if (error>(ENC_TICKS/2)){
   error = error-ENC_TICKS;
   }
@@ -144,8 +143,8 @@ void loop() {
   else{
   error = error;
   }
-  Serial.print(" new_err: ");
-   Serial.println(error);
+  //Serial.print(" new_err: ");
+  // Serial.println(error);
   
   curr_error = error;
   curr_time = millis();
@@ -180,8 +179,7 @@ void loop() {
 
 //  Serial.print("Current: ");
 //  Serial.print(currPosition);
-//  Serial.print("    Set: ");
-//  Serial.println(setPoint);
+
 
 
 
@@ -205,18 +203,19 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
-  setPoint = ((recievedSetPoint[1])<<8) + recievedSetPoint[0];
+  setPoint = (((recievedSetPoint[1])<<8) + recievedSetPoint[0])&0xFFFF;
   // setpoints are transmitted scaled, 36000 = 360.00
-  setPoint = ENC_TICKS*(setPoint/36000);
-//  Serial.println(setPoint);
+
+  setPoint = ENC_TICKS*((float)setPoint/36000);
+
 
   bool state = digitalRead(13); // um ok
   digitalWrite(13, !state);
 }
 
 void get_byte_position(){
-  sentPosition[0] = (((int)(currPosition *100))& 255);
-  sentPosition[1] = (((int)(currPosition *100))& (255<<8))>>8; // lol clever
+  sentPosition[0] = (((int)((float)currPosition *36000/ENC_TICKS))& 255);
+  sentPosition[1] = (((int)((float)currPosition *36000/ENC_TICKS))& (255<<8))>>8; // lol clever
 }
 
 

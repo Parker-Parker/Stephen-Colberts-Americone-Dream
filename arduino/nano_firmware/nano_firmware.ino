@@ -65,13 +65,14 @@ void setup() {
     Lower_Bound = 35;
     Upper_Bound = 105;
   }
-  Serial.begin(9600);
+ // Serial.begin(9600);
   prev_time = millis();
 
 
 }
 
 void loop() {
+
   currPosition = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
 //  Serial.print("currPos: ");
 //  Serial.print(currPosition);
@@ -121,7 +122,6 @@ void requestEvent(){
 }
 
 void receiveEvent(int bytesReceived){
-  Serial.print("ic2");
   for(int i = 0; i < bytesReceived; i++)
   {
     if(i < RECIEVED_SIZE)
@@ -133,16 +133,24 @@ void receiveEvent(int bytesReceived){
       Wire.read();
     }
   }
+  //Serial.print(recievedSetPoint[0]);
+  //Serial.print(" ");
+  //Serial.print(recievedSetPoint[1]);
   setPoint = (((recievedSetPoint[1])<<8) + recievedSetPoint[0])/100;
+  //Serial.print(" ");
+  //Serial.println(setPoint);
   if (setPoint > 360){
     setPoint = (map(analogRead(POT_PIN), 0, 1023, 0,807))/3;
   }
+
   if(setPoint < Lower_Bound){
     setPoint = Lower_Bound;
   }
   if(setPoint > Upper_Bound){
     setPoint = Upper_Bound;
   }
+
+
   bool state = digitalRead(13);
   digitalWrite(13, !state);
 }
