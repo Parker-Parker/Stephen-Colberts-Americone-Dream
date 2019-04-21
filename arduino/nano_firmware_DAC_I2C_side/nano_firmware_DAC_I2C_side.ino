@@ -114,7 +114,7 @@ void setup() {
   
 //  currPosition = map(analogRead(POT_PIN), 0, 1023, 0,359);
   setPoint = 0;
-    prev_time = millis();
+  //  prev_time = millis();
 
 }
 
@@ -139,8 +139,8 @@ void loop() {
   }
   
   curr_error = error;
-  curr_time = millis();
-  dt = (curr_time - prev_time) + 1;
+//  curr_time = millis();
+  dt = (2) + 1;
 //  Serial.print("dt*curr: ");
 //  Serial.print(dt*curr_error);
 //  Serial.print(" curr: ");

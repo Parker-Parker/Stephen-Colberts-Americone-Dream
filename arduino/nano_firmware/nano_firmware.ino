@@ -1,6 +1,6 @@
 #include <Wire.h>
-//#define SLAVE_ADDRESS     0x21  //TopTower
-#define SLAVE_ADDRESS     0x22  //BottomTower
+#define SLAVE_ADDRESS     0x21  //TopTower
+//#define SLAVE_ADDRESS     0x22  //BottomTower
 //#define SLAVE_ADDRESS     0x23
 //#define SLAVE_ADDRESS     0x24
 //#define SLAVE_ADDRESS     0x25
@@ -66,7 +66,7 @@ void setup() {
     Upper_Bound = 105;
   }
  // Serial.begin(9600);
-  prev_time = millis();
+
 
 
 }
@@ -83,8 +83,7 @@ void loop() {
 //  Serial.print(curr_error);
 //  Serial.print(" Duty: ");
 
-  curr_time = millis();
-  dt = (curr_time - prev_time) + 1;
+  dt = (2) + 1;
  integral_error += (dt)*curr_error; //need to prevent overflow
  if(integral_error > 10000){
   integral_error = 10000;

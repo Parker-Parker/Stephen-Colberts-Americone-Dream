@@ -1,9 +1,9 @@
 #include <Wire.h>
 //#define SLAVE_ADDRESS     0x21  //TopTower
 //#define SLAVE_ADDRESS     0x22  //BottomTower
-//#define SLAVE_ADDRESS     0x23  //base motor furthest
+#define SLAVE_ADDRESS     0x23  //base motor furthest
 //#define SLAVE_ADDRESS     0x24  //base motor elbow
-#define SLAVE_ADDRESS     0x25  //base motor stationary
+//#define SLAVE_ADDRESS     0x25  //base motor stationary
 
 #define RECIEVED_SIZE     4
 #define SENT_SIZE         20
@@ -116,7 +116,7 @@ void setup() {
   d = 0.0010;
   }
   setPoint = 0;
-  prev_time = millis();
+  //prev_time = millis();
 
 }
 
@@ -147,8 +147,8 @@ void loop() {
   // Serial.println(error);
   
   curr_error = error;
-  curr_time = millis();
-  dt = (curr_time - prev_time) + 1;
+ // curr_time = millis();
+  dt = (2) + 1;
   integral_error += (dt)*curr_error; //need to prevent overflow
   if(integral_error > 10000){
   integral_error = 10000;
