@@ -22,7 +22,7 @@ class Comms:
         # [self.serialPort.setPort(i.device) for i in self.availablePorts if i.device == "COM12" or i.device == "COM14"]
         yeet = []
         for i in self.availablePorts:
-            if i.device == "COM12" or i.device == "COM14" or i.device == "COM16":
+            if i.device == "COM12" or i.device == "COM13" or i.device == "COM14" or i.device == "COM16":
                 # self.serialPort.setPort(i.device)
                 print(i)
                 self.serialPort = serial.Serial(i.device)
@@ -261,74 +261,74 @@ class Comms:
     #             self.robot.joints = joints
     #             self.robot.nub = nub
 
-    def getStatus(self):
-        if self.serialPort.is_open:
-            # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
-            v1 = str(abs(int(self.robot.joints[0]))).zfill(3)
-            v2 = str(abs(int(self.robot.joints[1]))).zfill(3)
-            v3 = str(abs(int(self.robot.joints[2]))).zfill(3)
-            v4 = str(abs(int(self.robot.joints[3]))).zfill(3)
-            v5 = str(abs(int(self.robot.joints[4]))).zfill(3)
+    # def getStatus(self):
+    #     if self.serialPort.is_open:
+    #         # self.serialPort.write("000-000+000+000+000".encode("ASCII", "ignore"))
+    #         v1 = str(abs(int(self.robot.joints[0]))).zfill(3)
+    #         v2 = str(abs(int(self.robot.joints[1]))).zfill(3)
+    #         v3 = str(abs(int(self.robot.joints[2]))).zfill(3)
+    #         v4 = str(abs(int(self.robot.joints[3]))).zfill(3)
+    #         v5 = str(abs(int(self.robot.joints[4]))).zfill(3)
+    #
+    #         self.serialPort.write(("s"+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+    #         # print((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
+    #
+    #
+    #         if self.serialPort.in_waiting < 40:
+    #             # print("waiting for message: "+str(self.serialPort.in_waiting))
+    #             pass
+    #         else:
+    #             # jointAngles = self.serialPort.read(20)
+    #             # nubValues = self.serialPort.read(20)
+    #
+    #             message = self.serialPort.read(40)
+    #             # print(message)
+    #
+    #             joints = [0]*5
+    #             for i in range(5):
+    #                 joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+    #
+    #             nub = [0]*5
+    #             for i in range(5):
+    #                 nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+    #                 if message[i * 4 - 20]==0 :
+    #                     nub[i] = nub[i]
+    #                 else:
+    #                     nub[i] = -nub[i]
+    #
+    #             # print(joints)
+    #             # print(nub)
+    #
+    #             self.robot.joints = joints
+    #             self.robot.nub = nub
 
-            self.serialPort.write(("s"+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
-            # print((" "+v1+" "+v2+" "+v3+" "+v4+" "+v5).encode("ASCII", "ignore"))
-
-
-            if self.serialPort.in_waiting < 40:
-                # print("waiting for message: "+str(self.serialPort.in_waiting))
-                pass
-            else:
-                # jointAngles = self.serialPort.read(20)
-                # nubValues = self.serialPort.read(20)
-
-                message = self.serialPort.read(40)
-                # print(message)
-
-                joints = [0]*5
-                for i in range(5):
-                    joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
-
-                nub = [0]*5
-                for i in range(5):
-                    nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
-                    if message[i * 4 - 20]==0 :
-                        nub[i] = nub[i]
-                    else:
-                        nub[i] = -nub[i]
-
-                # print(joints)
-                # print(nub)
-
-                self.robot.joints = joints
-                self.robot.nub = nub
-
-    def parseLineTest(self,yeet):
-        # if self.serialPort.is_open():
-        #     if self.serialPort.in_waiting < 40:
-        #         # print("waiting for message: "+str(self.serialPort.in_waiting))
-        #         pass
-        #     else:
-                # jointAngles = self.serialPort.read(20)
-                # nubValues = self.serialPort.read(20)
-
-                # message = self.serialPort.read(40)
-        message = yeet[0:40]
-
-        joints = [0, 0, 0, 0, 0]
-        for i in range(5):
-            joints[i] = int("1234")#message[i*4:i*4+4].decode("ASCII"))
-            # joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
-
-        nub = [0, 0, 0, 0, 0]
-        for i in range(5):
-                    nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
-                    if message[i * 4 - 20]==0 :
-                        nub[i] = nub[i]
-                    else:
-                        nub[i] = -nub[i]
-
-        print(joints)
-        print(nub)
+    # def parseLineTest(self,yeet):
+    #     # if self.serialPort.is_open():
+    #     #     if self.serialPort.in_waiting < 40:
+    #     #         # print("waiting for message: "+str(self.serialPort.in_waiting))
+    #     #         pass
+    #     #     else:
+    #             # jointAngles = self.serialPort.read(20)
+    #             # nubValues = self.serialPort.read(20)
+    #
+    #             # message = self.serialPort.read(40)
+    #     message = yeet[0:40]
+    #
+    #     joints = [0, 0, 0, 0, 0]
+    #     for i in range(5):
+    #         joints[i] = int("1234")#message[i*4:i*4+4].decode("ASCII"))
+    #         # joints[i] = int(message[i*4:i*4+4].decode("ASCII"))
+    #
+    #     nub = [0, 0, 0, 0, 0]
+    #     for i in range(5):
+    #                 nub[i] = (message[i*4-19]<<16) + (message[i*4-18]<<8) + message[i*4-17]
+    #                 if message[i * 4 - 20]==0 :
+    #                     nub[i] = nub[i]
+    #                 else:
+    #                     nub[i] = -nub[i]
+    #
+    #     print(joints)
+    #     print(nub)
 
     def printPortDebug(self):
         self.serialPort = serial.Serial()
@@ -369,15 +369,16 @@ class Robot:
     ####################################
     ### 3-30-2019
     ####################################
+    # __HL = 0.2   #?
+    # __HH = 1.   #?
+
     __TL = 11.25
     __BL = 12.375
     __GL = 2.48
     __FL = 2.5
     __LL = 3.375
     __T  = 22.  #?
-    # __HH = 1.   #?
     __HH = 0.0   #?
-    # __HL = 0.2   #?
     __HL = 0.0   #?
     __L0 = 4.   #?
     __L1 = 4.   #?
@@ -2268,9 +2269,26 @@ class Robot:
         # gains = [0.00000035, 0.00000025, 0.000004, 0, 0.0000003, 0.000005]
         # gains = [0.0000035, 0.0000025, 0.000004, 0, 0.000007, 0.000005] # last good
         # gains = [0.0000035, 0.0000025, 0.00000, 0, 0.0000, 0.000005]
-        gains = [0.0000035, 0.0000025, 0.00000, 0, 0.0000, 0.000000]
+        # gains = [0.0000035, 0.0000025, 0.00000, 0, 0.0000, 0.000000]
+        # gains = [0.00000, 0.00000, 0.000025, 0, -0.000037, 0.000000]
+
         # gains = [0.00000, 0.0000025, 0.00000, 0, 0.0000, 0.000000]
+        # ############################################
+        # gains = [-0.0000008, -0.000001, 0.000008, 0, -0.0000005, 0.000005]
         # gains = [0.00000035, 0.00000025, 0.00000, 0, 0.0000, 0.0000005]
+        # FULL BEST WORKING #######################################
+        # gains = [-0.0000008, -0.000001, 0.000008, 0, -0.0000005, 0.000005]
+        # gains = [-0.0000008, -0.000001, 0.000008, 0, -0.0000005, 0.000005]
+        # gains = [-0.0000008, -0.000001, 0.000008, 0, -0.0000005, 0.000005]
+        # gains = [-0.0000008, -0.000001, 0.000008, 0, -0.0000005, 0.000005]
+
+        # gains = [-0.000002, -0.000001, 0.000008, 0, -0.000000, 0.00000]
+        gains = [-0.0000025, -0.000001, 0.00000, 0, -0.000000, 0.00000]
+        # gains = [-0.00000, -0.00000, 0.00000, 0, -0.000000, 0.00000]
+
+
+        # gains = [-0.000000, -0.00000, 0.00000, 0, -0.00000, 0.0000085]
+
 
 
         deltas = [a_i * b_i for a_i, b_i in zip(gains,forces)]
@@ -2546,26 +2564,31 @@ if __name__ == '__main__':
     # r.testKin()
     r.jointTargets = [85, 150, 00, 0, 0]
     last_time = time.clock()
-    while True:
-        # print("Exec time: "+str(time.clock()-last_time)+"s")
-        # print('hoi')
-        # r.main()
-        # r.demoZ()
-        # r.demoZK()
-        # r.demoZKF()
-        # r.demoZKXYZ()
-        # r.demoZPOP()
-        # r.demoZK327()
-        # r.comms.getStatus()
-        # print(r.nub)
-        # r.demoPLANAR()
-        # r.demoPLANAR90DTOTFIX()
-        # r.demoPLANAR90DHOTFIXYEET()
+    try:
+        while True:
+            # print("Exec time: "+str(time.clock()-last_time)+"s")
+            # print('hoi')
+            # r.main()
+            # r.demoZ()
+            # r.demoZK()
+            # r.demoZKF()
+            # r.demoZKXYZ()
+            # r.demoZPOP()
+            # r.demoZK327()
+            # r.comms.getStatus()
+            # print(r.nub)
+            # r.demoPLANAR()
+            # r.demoPLANAR90DTOTFIX()
+            # r.demoPLANAR90DHOTFIXYEET()
 
-        # r.demoPLANAR90DHOTFIXYEET2electricboogaloo()
-        # r.demoZK327torque()
-        # r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRD()
-        r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRDthe3rdDimensionMuthafuckaaa()
-        # print("Exec time: "+str(time.clock()-last_time)+"s")
-        time.sleep(.1)
-        last_time = time.clock()
+            # r.demoPLANAR90DHOTFIXYEET2electricboogaloo()
+            # r.demoZK327torque()
+            # r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRD()
+            r.demoPLANAR90DHOTFIXYEET2electricboogalooTWEKRDthe3rdDimensionMuthafuckaaa()
+            # print("Exec time: "+str(time.clock()-last_time)+"s")
+            time.sleep(.1)
+            last_time = time.clock()
+    except KeyboardInterrupt as e:
+        print(e)
+        r.comms.serialPort.close()
+        print("peace out girl scout")
